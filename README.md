@@ -1,2 +1,64 @@
-# discord-matchmaking
-A Discord matchmaking bot that is able to create gameservers on the fly.
+Discord Matchmaking Bot
+-----------------
+
+Matchmaking bot made with [Discord.js](https://discord.js.org) (Node.js)
+
+Features
+----------
+- Match creation
+    - Choose slots
+    - Choose map
+- List matches
+- Players can !join / !leave
+- A game server gets created and provisioned (@DigitalOcean) for the match when all slots are filled and players get a private message with the server credentials to join
+    - Only COD(1) supported for now
+- Servers are destroyed after some time
+- Admins can request info for matches (included sensitive information like password and rcon)
+- Matches get erased after a period of inactivity if they were not completed
+- Matches get erased when all players leave
+
+
+Running the bot
+----------
+- `npm install`
+- Fill the required tokens in `secrets.js`
+- `knex migrate:latest`
+- (Optional) `knex seed:run` // To have some test data
+- `npm run dev`
+- Your bot should be ready
+- Generate an invite to your desired channel:
+
+Put this in the bottom of `index.js`
+```js
+bot.getClient().on('ready', async () => {
+    try {
+        let link = await client.generateInvite(["ADMINISTRATOR"])
+        console.log(link)
+    } catch (e) {
+        console.log(e.stack)
+    }
+})
+```
+(You can erase the code block when you are done with the invitation)
+
+
+[Migrations](http://knexjs.org/#Migrations)
+----------
+Once you have finished writing the migrations, you can update the database matching your NODE_ENV by running:
+
+`knex migrate:latest`
+
+You can also pass the --env flag or set NODE_ENV to select an alternative environment:
+
+`knex migrate:latest --env production`
+
+To rollback the last batch of migrations:
+
+`knex migrate:rollback`
+
+`knex seed:run`
+
+
+License
+----------
+MIT

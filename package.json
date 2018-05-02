@@ -1,0 +1,26 @@
+{
+  "name": "matchbot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "cross-env NODE_ENV=development node index.js",
+    "production": "cross-env NODE_ENV=production node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js-commando": "^0.9.0",
+    "dots-wrapper": "^2.0.4",
+    "knex": "^0.14.6",
+    "lodash": "^4.17.10",
+    "moment": "^2.22.1",
+    "objection": "^1.1.7",
+    "sqlite3": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/es6-promise": "^3.3.0",
+    "cross-env": "^5.1.4"
+  }
+}
