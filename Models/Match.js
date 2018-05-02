@@ -185,7 +185,7 @@ class Match extends Model {
             .query()
             .upsertGraph({
                 id: this.id,
-                last_activity_at: moment().format('YYYY-MM-DD HH:mm:ss')
+                last_activity_at: moment().format('YYYY-MM-DD HH:mm:ss'),
                 players: [
                     {
                         id: player.id
