@@ -7,10 +7,10 @@ const moment = require('moment');
  */
 const init = () => {
     setInterval(() => {
-        console.log('Tasks running...')
+        // console.log('Tasks running...')
         lookForDestroyableServers()
         cancelInactiveMatches()
-    }, 5000)
+    }, 60000)
 }
 
 const lookForDestroyableServers = () => {
@@ -42,7 +42,7 @@ const cancelInactiveMatches = ()=> {
             .format('YYYY-MM-DD HH:mm:ss')
         )
         .then(matches => {
-            if (matches) {
+            if (matches.length) {
                 console.log('Canceling matches', matches)
             }
 
