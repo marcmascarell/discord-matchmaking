@@ -11,7 +11,7 @@ module.exports = class MatchCard {
     render(match) {
         const embed = new Discord.RichEmbed().setColor('#9B59B6');
 
-        const firstMap = _.capitalize(match.mapNames[0])
+        const firstMap = match.mapNames[0]
 
         const mapImage = MapType.getMapImage(firstMap)
 

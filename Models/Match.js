@@ -1,6 +1,7 @@
+const _ = require('lodash');
+const moment = require('moment');
 const utils = require('../Utilities/utils');
 const bot = require('../bot');
-const moment = require('moment');
 const Model = require('./BaseModel');
 const DeletedMatchDueToMatchEnding = require('../Events/DeletedMatchDueToMatchEnding');
 const DeletedMatchDueToDesertion = require('../Events/DeletedMatchDueToDesertion');
@@ -51,7 +52,7 @@ class Match extends Model {
     }
 
     mapNames() {
-        return this.maps.split(',');
+        return this.maps.split(',').map(map => _.capitalize(map));
     }
 
     /**
