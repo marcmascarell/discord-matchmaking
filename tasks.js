@@ -35,10 +35,10 @@ const cancelInactiveMatches = ()=> {
         .where('canceled_reason', null) // Not already canceled
         .where('server_id', null) // The match did not start
         .where(
-            'last_activity_at', 
-            '<', 
+            'last_activity_at',
+            '<',
             moment()
-            .substract('15', 'minutes')
+            .subtract('15', 'minutes')
             .format('YYYY-MM-DD HH:mm:ss')
         )
         .then(matches => {
