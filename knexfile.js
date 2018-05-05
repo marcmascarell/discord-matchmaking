@@ -24,7 +24,7 @@ module.exports = {
         client: 'sqlite3',
         useNullAsDefault: true,
         connection: {
-            filename: '../../shared/database.sqlite3'
+            filename: 'var/www/discord-matchmaking/database.sqlite3'
         },
         migrations: {
             directory: directories.migrations
