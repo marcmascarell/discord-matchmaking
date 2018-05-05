@@ -42,7 +42,7 @@ const getServerNameForMatch = (match : Match) => {
 }
 
 const getServers = () => {
-    const url = `https://www.jsonstore.io/${secrets.jsonStore}`
+    const url = `https://www.jsonstore.io/${secrets.jsonStore}?v=${+ new Date()}`
 
     return new Promise((resolve, reject) => {
         https.get(url, function(res : any){
