@@ -48,6 +48,7 @@ module.exports = class ListCommand extends Command {
         //     new ListPendingMatches(Match.getReadyMatches())
         // }
 
-        return message.reply('Use `!match` or `!mix` to start a new one');
+        return message.reply('Use `!match` to start a new one');
+        // return message.reply('Use `!match` or `!mix` to start a new one');
     }
 };
