@@ -4,3 +4,5 @@ dist/
 .idea/
 .vscode/
 dev.sqlite3
+shipitfile.js
+deploy.php

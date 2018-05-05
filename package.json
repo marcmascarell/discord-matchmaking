@@ -8,7 +8,8 @@
     "build": "tsc",
     "watch": "tsc --watch",
     "dev": "cross-env NODE_ENV=development node dist/index.js",
-    "production": "cross-env NODE_ENV=production node dist/index.js"
+    "production": "cross-env NODE_ENV=production node dist/index.js",
+    "postinstall" : "build"
   },
   "author": "",
   "license": "ISC",
@@ -28,6 +29,8 @@
     "@types/es6-promise": "^3.3.0",
     "@types/lodash": "^4.14.106",
     "cross-env": "^5.1.4",
+    "shipit-cli": "^4.1.0",
+    "shipit-deploy": "^4.1.0",
     "typescript": "^2.8.3"
   }
 }
