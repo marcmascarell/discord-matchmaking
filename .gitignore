@@ -1,3 +1,6 @@
-secrets.js
+src/secrets.js
+src/secrets.ts
+dist/
 .idea/
+.vscode/
 dev.sqlite3
