@@ -1,6 +1,8 @@
 import {Command, CommandMessage, CommandoClient} from "discord.js-commando"
 const Discord = require("discord.js")
 
+import _ from 'lodash'
+import secrets from '../../secrets'
 import utils from '../../Utilities/utils'
 import Match from '../../Models/Match'
 
@@ -24,8 +26,9 @@ export default class JoinCommand extends Command {
     }
 
     hasPermission(message : CommandMessage) {
-        return false
-        // return secrets.discordAdmins.includes(message.author.id)
+        const found = _.find(secrets.discordAdmins, id => id === message.author.id)
+
+        return found !== undefined
     }
 
     async run(message : CommandMessage, {id} : {id: number}) {
