@@ -3,7 +3,7 @@ import Match from "../../Models/Match"
 
 import MapType from '../../Types/MapArgumentType'
 
-module.exports = class MatchCommand extends Command {
+export default class MatchCommand extends Command {
     constructor(client : CommandoClient) {
         super(client, {
             name: 'match',

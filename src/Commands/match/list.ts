@@ -3,7 +3,7 @@ import Match from "../../Models/Match"
 import ListPendingMatches from "../../Listeners/ListPendingMatches"
 import {DMChannel, GroupDMChannel, TextChannel} from "discord.js"
 
-module.exports = class ListCommand extends Command {
+export default class ListCommand extends Command {
     constructor(client : CommandoClient) {
         super(client, {
             name: 'list',
