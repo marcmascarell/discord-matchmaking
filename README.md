@@ -21,14 +21,15 @@ Features
 Running the bot
 ----------
 - `npm install`
-- Fill the required tokens in `secrets.js`
+- Fill the required tokens in `secrets.ts` (rename the `secrets.examples.ts`)
 - `knex migrate:latest`
 - (Optional) `knex seed:run` // To have some test data
+- `npm run watch` / `npm run build` to compile ts files
 - `npm run dev`
 - Your bot should be ready
 - Generate an invite to your desired channel:
 
-Put this in the bottom of `index.js`
+Put this in the bottom of `index.ts`
 ```js
 bot.getClient().on('ready', async () => {
     try {
@@ -41,6 +42,14 @@ bot.getClient().on('ready', async () => {
 ```
 (You can erase the code block when you are done with the invitation)
 
+Caveats
+----------
+Solving "error TS2339: Property 'applyFilter' does not exist on type" objection.js error:
+
+Change the typings from node_modules with this:
+https://github.com/Vincit/objection.js/blob/master/typings/objection/index.d.ts
+
+It is a temporal solution until they release a new version which will include the fix.
 
 [Migrations](http://knexjs.org/#Migrations)
 ----------
