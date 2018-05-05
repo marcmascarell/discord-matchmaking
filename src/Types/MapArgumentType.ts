@@ -81,5 +81,3 @@ export default class MapArgumentType extends ArgumentType {
         return val.toLowerCase();
     }
 }
-
-module.exports = MapArgumentType;
