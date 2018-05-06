@@ -20,11 +20,11 @@ export default class NotifyMatchReady extends Listener {
         const axis = randomPlayers.slice(match.playersPerTeam())
 
         if (allies.length) {
-            embed.addField('Allies', allies.join(','))
+            embed.addField('Allies (Blue)', allies.join(','))
         }
 
         if (axis.length) {
-            embed.addField('Axis', axis.join(','))
+            embed.addField('Axis (Red)', axis.join(','))
         }
 
         embed.setFooter(`Preparing server... (~3min. aprox)`)

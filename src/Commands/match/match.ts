@@ -24,7 +24,7 @@ export default class MatchCommand extends BaseCommand {
                 {
                     key: 'players',
                     label: 'Players',
-                    prompt: 'How many players? 5v5/5vs5 ...',
+                    prompt: 'How many players? (5 or 5v5 or 5vs5 ... NvsN)',
                     type: 'string',
                     wait: 15
                 },
@@ -40,16 +40,31 @@ export default class MatchCommand extends BaseCommand {
     }
 
     async run(message : CommandMessage, { players, map } : { players : string, map : string}) {
-        const regex = /(\d)(v|vs|\svs\s|\sv\s)\d/gm;
+        // const regex = /(\d)(v|vs|\svs\s|\sv\s)\d/gm;
+        //
+        // const regexMatch = regex.exec(players)
+        //
+        // if (regexMatch === null) {
+        //     return message.reply(`Invalid syntax. Write it like this: 5v5 or 5vs5 (NvsN)`);
+        // }
+        // const playersPerTeam = parseInt(regexMatch[1], 10)
 
-        const regexMatch = regex.exec(players)
+        // This works with 5, 5v5, 5vs5 formats
+        const playersPerTeam = parseInt(players[0], 10)
 
-        if (regexMatch === null) {
-            return message.reply(`Invalid syntax. Write it like this: 5v5 or 5vs5 (NvsN)`);
+        if (isNaN(playersPerTeam)) {
+            return message.reply(`Invalid player number. Write it like this: 5 or 5v5 or 5vs5 (NvsN)`);
         }
 
-        const playersPerTeam = parseInt(regexMatch[1], 10)
         const maxPlayers = playersPerTeam * 2
+
+        if (playersPerTeam < 2) {
+            return message.reply(`2 players per team is the minmum`);
+        }
+
+        if (playersPerTeam > 6) {
+            return message.reply(`6 players per team is the maximum`);
+        }
 
         if (maxPlayers % 2 !== 0) {
             return message.reply(`Players must be divisible by 2`);

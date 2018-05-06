@@ -3,6 +3,7 @@ import bot from '../bot'
 import Match from "../Models/Match"
 import utils from "../Utilities/utils"
 import {Guild, GuildMember} from "discord.js"
+import MatchCard from "../Embeds/MatchCard"
 
 export default class SendServerInfoToPlayers extends Listener {
 
@@ -26,16 +27,34 @@ export default class SendServerInfoToPlayers extends Listener {
                 return utils.includes(playersIds, member.user.id)
             })
 
+        const embed = new MatchCard(match).render()
+
+        embed.setColor('#37b600');
+        embed.setTitle(`Your match is ready!`)
+
+        embed.setDescription(
+            `\r\n- Join your respective voice channel` +
+            `\r\n- Do not start the game until all players are ready (You won't be able to restart the map)` +
+            `\r\n- You are expected to behave and respect the common sense rules`
+        )
+
+        embed.addField(
+            `Server`,
+            `/connect ${match.server.ip}; password ${match.server.password}`
+        )
+
+        embed.addField(
+            `Voice channel`,
+            `Match #${match.id}`
+        )
+
+        embed.setFooter(
+            `Good luck & Have fun! (Server will self-destroy after ${minutes} minutes)`
+        )
+
         players.forEach((player : GuildMember) => {
             player.createDM().then(channel => {
-                channel.send(
-                    `Your match ${match.id} is ready:` +
-                    `\r\n` +
-                    '`' + `/connect ${match.server.ip}; password ${match.server.password}` + '`' +
-                    `\r\n- Do not start the game until all players are ready (You won't be able to restart the map)` +
-                    `\r\n- You are expected to behave and respect the common sense rules` +
-                    `\r\nGood luck & Have fun! (Server will self-destroy after ${minutes} minutes)`
-                )
+                channel.send(embed)
             })
         })
 

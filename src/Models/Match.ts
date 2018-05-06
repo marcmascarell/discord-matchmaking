@@ -119,6 +119,7 @@ export default class Match extends Model {
                     deleted_at: moment().format('YYYY-MM-DD HH:mm:ss')
                 })
                 .where('id', this.id)
+                .then(response => response) // Force query execution
     }
 
     isServerOnline() {

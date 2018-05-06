@@ -3,7 +3,7 @@ import Match from "../Models/Match"
 const { DigitalOcean } = require('dots-wrapper');
 import secrets from '../secrets'
 import ServerLimitReached from '../Errors/ServerLimitReached'
-import Server from "../Models/Server"
+import utils from "../Utilities/utils"
 
 const digitalOcean = new DigitalOcean(secrets.digitalOceanToken);
 
@@ -14,7 +14,7 @@ const serverLimit = 3
 
 const isLimitReached = () => {
     return new Promise((resolve, reject) => {
-        digitalOcean.Droplet.list('codserver', 0, 5).subscribe((response : any) => {
+        digitalOcean.Droplet.list(getServerTag(), 0, 5).subscribe((response : any) => {
             if (response.total >= serverLimit) {
                 return resolve(true)
             }
@@ -45,8 +45,8 @@ const create = (match : Match) => {
                 image: 33885904,
                 // ssh_keys?: string[];
                 tags: [
-                    'codserver',
-                    `match-${match.id}`
+                    getServerTag(),
+                    getMatchTag(match)
                 ]
             }).subscribe((server : any) => {
                 if (server.name) {
@@ -63,6 +63,16 @@ const create = (match : Match) => {
     })
 }
 
+const getServerTag = () => {
+    // Avoid dev environment from interfere official servers
+    return utils.isDevelopment() ? `test-codserver` : `codserver`
+}
+
+const getMatchTag = (match) => {
+    // Avoid dev environment from interfere official servers
+    return utils.isDevelopment() ? `test-match-${match.id}` : `match-${match.id}`
+}
+
 const destroy = (match : Match) => {
     console.log('server to destroy', match.server)
     console.log('from match', match)
@@ -73,7 +83,7 @@ const destroy = (match : Match) => {
             return;
         }
 
-        digitalOcean.Droplet.delete(`match-${match.id}`).subscribe(() => {
+        digitalOcean.Droplet.delete(getMatchTag(match)).subscribe(() => {
             console.log('droplet delete', match.id)
             resolve()
         }, (err: Error) => {
