@@ -62,7 +62,7 @@ export default class JoinCommand extends BaseCommand {
         if (match.isServerOnline()) {
             embed.addField(
                 `Ip`,
-                match.server.serverIP
+                match.server.ip
             )
 
             embed.addField(
