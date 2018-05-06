@@ -1,5 +1,6 @@
 import Match from "../Models/Match"
 import secrets from "../secrets"
+import {Guild, GuildResolvable} from "discord.js"
 
 const https = require('https')
 const _ = require('lodash');
@@ -79,6 +80,20 @@ const isServerReady = (serverName : string) => {
     })
 }
 
+const isGuildOnlyDev = (guild : GuildResolvable) => {
+    const id = guild instanceof Guild ? guild.id : guild
+
+    return includes(secrets.guilds.development, id)
+}
+
+// We don't want to use _.includes because it searches for substring
+// Native .includes() isn't well supported yet
+const includes = (collection, value) => {
+    const found = _.find(collection, item => item === value);
+
+    return found !== undefined
+}
+
 const getEnvironment = () => process.env.NODE_ENV
 const isDevelopment = () => process.env.NODE_ENV === 'development'
 const isProduction = () => process.env.NODE_ENV === 'production'
@@ -90,6 +105,8 @@ export default {
     isServerReady,
     getSlotsForMatch,
     getEnvironment,
+    isGuildOnlyDev,
     isDevelopment,
     isProduction,
+    includes
 }

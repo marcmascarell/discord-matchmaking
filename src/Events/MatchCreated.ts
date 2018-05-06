@@ -6,7 +6,7 @@ export default class MatchCreated extends Event {
     get listeners() : Array<any> {
    		return [
             NotifyNewMatch
-		]
+        ]
 	}
 
 };

@@ -119,6 +119,7 @@ export default class Match extends Model {
                     deleted_at: moment().format('YYYY-MM-DD HH:mm:ss')
                 })
                 .where('id', this.id)
+                .then(response => response) // Force query execution
     }
 
     isServerOnline() {
@@ -173,9 +174,7 @@ export default class Match extends Model {
     }
 
     static isPlayerInMatch(match : Match, player : {id: string}) : boolean {
-        const found = _.find(match.playerIds(), (id : string) => id === player.id)
-
-        return found !== undefined
+        return utils.includes(match.playerIds(), player.id)
     }
 
     static isPlayerInMatches(matches : Match[], player : {id : string}) {

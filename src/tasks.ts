@@ -27,7 +27,7 @@ const lookForDestroyableServers = () => {
             servers.forEach(async server => {
                 const match = await server.getMatch()
 
-                await match.cancel(Match.REMOVAL_REASONS.ENDED)
+                match.cancel(Match.REMOVAL_REASONS.ENDED)
             })
         })
 }
@@ -49,7 +49,7 @@ const cancelNonStartedInactiveMatches = ()=> {
             }
 
             matches.forEach(async match => {
-                await match.cancel(Match.REMOVAL_REASONS.INACTIVITY)
+                match.cancel(Match.REMOVAL_REASONS.INACTIVITY)
             })
         })
 }

@@ -1,5 +1,6 @@
 import DeletedMatch from './DeletedMatch'
 import DestroyMatchServer from '../Listeners/DestroyMatchServer'
+import DeleteVoiceChannels from '../Listeners/DeleteVoiceChannels'
 import Match from "../Models/Match"
 
 export default class DeletedMatchDueToMatchEnding extends DeletedMatch {
@@ -11,7 +12,8 @@ export default class DeletedMatchDueToMatchEnding extends DeletedMatch {
 
     get listeners() : Array<any> {
         return [
-            DestroyMatchServer
+            DestroyMatchServer,
+            DeleteVoiceChannels
         ]
     }
 };

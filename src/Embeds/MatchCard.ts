@@ -34,7 +34,7 @@ export default class MatchCard {
             embed.addField(
                 `${playersPerTeam}vs${playersPerTeam} on ${firstMap} (${match.players.length}/${match.maxPlayers})`,
                 match.playerNames().join(', ')
-        )
+            )
 
             embed.addField(`Join command`, '`!join '+ match.id +'`')
         }
