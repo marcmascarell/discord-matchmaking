@@ -1,9 +1,11 @@
 const Commando = require('discord.js-commando');
 const path = require('path');
 import secrets from './secrets'
+import utils from './Utilities/utils'
 
 const client = new Commando.Client({
-    owner: secrets.discordOwner
+    owner: secrets.discordOwner,
+    unknownCommandResponse: utils.isDevelopment()
 });
 
 const getClient = () => client
@@ -19,12 +21,17 @@ const init = () => {
             ])
 
             // Registers all built-in groups, commands, and argument types
-            .registerDefaults()
+            // .registerDefaults()
+            .registerDefaultCommands({
+                help: true
+            })
+            .registerDefaultGroups()
+            .registerDefaultTypes()
 
             .registerTypesIn(path.join(__dirname, 'Types'))
 
             // Registers all of your commands in the ./commands/ directory
-            .registerCommandsIn(path.join(__dirname, 'Commands'));
+            .registerCommandsIn(path.join(__dirname, 'Commands/match'));
     })
 
     client.login(secrets.discordToken);

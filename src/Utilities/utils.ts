@@ -83,7 +83,15 @@ const isServerReady = (serverName : string) => {
 const isGuildOnlyDev = (guild : GuildResolvable) => {
     const id = guild instanceof Guild ? guild.id : guild
 
-    return _.some(secrets.guilds.development, id)
+    return includes(secrets.guilds.development, id)
+}
+
+// We don't want to use _.includes because it searches for substring
+// Native .includes() isn't well supported yet
+const includes = (collection, value) => {
+    const found = _.find(collection, item => item === value);
+
+    return found !== undefined
 }
 
 const getEnvironment = () => process.env.NODE_ENV
@@ -100,4 +108,5 @@ export default {
     isGuildOnlyDev,
     isDevelopment,
     isProduction,
+    includes
 }

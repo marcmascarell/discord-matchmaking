@@ -1,5 +1,6 @@
 import {ArgumentType, CommandoClient} from "discord.js-commando"
 import _ from 'lodash'
+import utils from '../Utilities/utils'
 
 export default class MapArgumentType extends ArgumentType {
     constructor(client : CommandoClient) {
@@ -76,7 +77,7 @@ export default class MapArgumentType extends ArgumentType {
         const maps = this.lowercasedMaps()
         maps.push('random')
 
-        return _.some(maps, value);
+        return utils.includes(maps, value);
     }
 
     parse(val : string) : string {

@@ -1,7 +1,7 @@
 import {CommandMessage, CommandoClient} from "discord.js-commando"
 import Match from "../../Models/Match"
 import ListPendingMatches from "../../Listeners/ListPendingMatches"
-import {DMChannel, GroupDMChannel, GuildResolvable, TextChannel} from "discord.js"
+import {DMChannel, GroupDMChannel, TextChannel} from "discord.js"
 import BaseCommand from '../BaseCommand'
 
 export default class ListCommand extends BaseCommand {

@@ -1,7 +1,7 @@
 import Listener from './Listener'
 import bot from '../bot'
 import Match from "../Models/Match"
-import _ from "lodash"
+import utils from "../Utilities/utils"
 import {Guild, GuildMember} from "discord.js"
 
 export default class SendServerInfoToPlayers extends Listener {
@@ -23,7 +23,7 @@ export default class SendServerInfoToPlayers extends Listener {
             .find((guild : Guild) => guild.id === channel.guild.id)
             .members
             .filter((member : GuildMember) => {
-                return _.some(playersIds, member.user.id)
+                return utils.includes(playersIds, member.user.id)
             })
 
         players.forEach((player : GuildMember) => {

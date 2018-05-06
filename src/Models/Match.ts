@@ -173,7 +173,7 @@ export default class Match extends Model {
     }
 
     static isPlayerInMatch(match : Match, player : {id: string}) : boolean {
-        return _.some(match.playerIds(), player.id)
+        return utils.includes(match.playerIds(), player.id)
     }
 
     static isPlayerInMatches(matches : Match[], player : {id : string}) {

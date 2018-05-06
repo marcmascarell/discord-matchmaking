@@ -27,7 +27,7 @@ export default class JoinCommand extends BaseCommand {
     }
 
     hasPermission(message : CommandMessage) {
-        return _.some(secrets.discordAdmins, message.author.id)
+        return utils.includes(secrets.discordAdmins, message.author.id)
     }
 
     async run(message : CommandMessage, {id} : {id: number}) {
