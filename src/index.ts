@@ -10,12 +10,3 @@ const client = bot.getClient()
 client.on("error", (e) => console.error(e));
 client.on("warn", (e) => console.warn(e));
 // client.on("debug", (e) => console.info(e));
-
-bot.getClient().on('ready', async () => {
-    try {
-        let link = await client.generateInvite(["ADMINISTRATOR"])
-        console.log(link)
-    } catch (e) {
-        console.log(e.stack)
-    }
-})
