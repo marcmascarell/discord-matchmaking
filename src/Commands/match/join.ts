@@ -1,8 +1,9 @@
-import {Command, CommandMessage, CommandoClient} from "discord.js-commando"
+import {CommandMessage, CommandoClient} from "discord.js-commando"
 import Match from "../../Models/Match"
 import MatchReady from "../../Events/MatchReady"
+import BaseCommand from '../BaseCommand'
 
-export default class JoinCommand extends Command {
+export default class JoinCommand extends BaseCommand {
     constructor(client : CommandoClient) {
         super(client, {
             name: 'join',

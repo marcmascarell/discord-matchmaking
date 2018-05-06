@@ -72,9 +72,11 @@ export default class MapArgumentType extends ArgumentType {
     }
 
     validate(val : string) : boolean {
-        const map = _.find(this.lowercasedMaps(), (map : string) => map === this.parse(val))
+        const value = this.parse(val)
+        const maps = this.lowercasedMaps()
+        maps.push('random')
 
-        return map !== undefined || map === 'random';
+        return _.some(maps, value);
     }
 
     parse(val : string) : string {

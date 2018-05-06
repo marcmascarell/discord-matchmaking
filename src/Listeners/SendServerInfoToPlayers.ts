@@ -23,9 +23,7 @@ export default class SendServerInfoToPlayers extends Listener {
             .find((guild : Guild) => guild.id === channel.guild.id)
             .members
             .filter((member : GuildMember) => {
-                const found = _.find(playersIds, (id : string) => id === member.user.id)
-
-                return found !== undefined
+                return _.some(playersIds, member.user.id)
             })
 
         players.forEach((player : GuildMember) => {

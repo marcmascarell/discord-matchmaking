@@ -1,5 +1,6 @@
 import Match from "../Models/Match"
 import secrets from "../secrets"
+import {Guild, GuildResolvable} from "discord.js"
 
 const https = require('https')
 const _ = require('lodash');
@@ -79,6 +80,12 @@ const isServerReady = (serverName : string) => {
     })
 }
 
+const isGuildOnlyDev = (guild : GuildResolvable) => {
+    const id = guild instanceof Guild ? guild.id : guild
+
+    return _.some(secrets.guilds.development, id)
+}
+
 const getEnvironment = () => process.env.NODE_ENV
 const isDevelopment = () => process.env.NODE_ENV === 'development'
 const isProduction = () => process.env.NODE_ENV === 'production'
@@ -90,6 +97,7 @@ export default {
     isServerReady,
     getSlotsForMatch,
     getEnvironment,
+    isGuildOnlyDev,
     isDevelopment,
     isProduction,
 }

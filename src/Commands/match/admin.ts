@@ -1,12 +1,13 @@
-import {Command, CommandMessage, CommandoClient} from "discord.js-commando"
+import {CommandMessage, CommandoClient} from "discord.js-commando"
 const Discord = require("discord.js")
 
 import _ from 'lodash'
 import secrets from '../../secrets'
 import utils from '../../Utilities/utils'
 import Match from '../../Models/Match'
+import BaseCommand from '../BaseCommand'
 
-export default class JoinCommand extends Command {
+export default class JoinCommand extends BaseCommand {
     constructor(client : CommandoClient) {
         super(client, {
             name: 'admin',
@@ -26,9 +27,7 @@ export default class JoinCommand extends Command {
     }
 
     hasPermission(message : CommandMessage) {
-        const found = _.find(secrets.discordAdmins, id => id === message.author.id)
-
-        return found !== undefined
+        return _.some(secrets.discordAdmins, message.author.id)
     }
 
     async run(message : CommandMessage, {id} : {id: number}) {

@@ -173,9 +173,7 @@ export default class Match extends Model {
     }
 
     static isPlayerInMatch(match : Match, player : {id: string}) : boolean {
-        const found = _.find(match.playerIds(), (id : string) => id === player.id)
-
-        return found !== undefined
+        return _.some(match.playerIds(), player.id)
     }
 
     static isPlayerInMatches(matches : Match[], player : {id : string}) {
