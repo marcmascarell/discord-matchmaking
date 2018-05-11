@@ -1,7 +1,7 @@
 // Update with your config settings.
 const directories = {
-    migrations: './src/migrations',
-    seeds: './src/seeds',
+    migrations: './src/Migrations',
+    seeds: './src/Seeds',
 }
 
 module.exports = {

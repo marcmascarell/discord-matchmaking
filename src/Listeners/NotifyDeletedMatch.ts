@@ -7,7 +7,7 @@ export default class NotifyDeletedMatch extends Listener {
         let message = `Deleting match #${match.id}...`
 
         if (match.players.length) {
-            message += ' **Affected players: `' + match.playerNames().join(', ') + '`**'
+            message += ' **Affected players: `' + match.playerNames().join(', ') + '` **'
         }
 
         match.getChannel().send(message)

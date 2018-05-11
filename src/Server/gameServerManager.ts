@@ -27,7 +27,8 @@ const isLimitReached = () => {
     })
 }
 
-const create = (match : Match) => {
+const create = ({id, name} : {id: number, name: string}) => {
+    const match = {id, name}
     console.log(`Creating server for match #${match.id}...`)
     return new Promise((resolve, reject) => {
         isLimitReached()
@@ -36,13 +37,11 @@ const create = (match : Match) => {
                 throw new ServerLimitReached()
             }
 
-            const name = match.getServerName()
-
             digitalOcean.Droplet.create({
                 name: name,
                 region: 'fra1',
                 size: 's-1vcpu-1gb',
-                image: 33885904,
+                image: 34250946,
                 // ssh_keys?: string[];
                 tags: [
                     getServerTag(),
