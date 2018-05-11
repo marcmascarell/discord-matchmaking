@@ -10,7 +10,10 @@ export default class CreateMatchServer extends Listener {
         const channel = match.getChannel()
 
         gameServerManager
-            .create(match)
+            .create({
+                id: match.id,
+                name: match.getServerName()
+            })
             .then(() => {
                 console.log('Waiting for server')
 
