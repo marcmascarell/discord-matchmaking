@@ -18,6 +18,7 @@
     "discord.js": "^11.3.2",
     "discord.js-commando": "^0.10.0",
     "dots-wrapper": "^2.0.4",
+    "gamedig": "^1.0.46",
     "knex": "^0.14.6",
     "lodash": "^4.17.10",
     "moment": "^2.22.1",
