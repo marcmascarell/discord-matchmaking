@@ -12,7 +12,7 @@ export default class MapArgumentType extends ArgumentType {
     }
 
     static getMapImage(map : string) : string {
-        const name = map.toLowerCase()
+        const name = map.replace('mp_', '').toLowerCase()
 
         if (MapArgumentType.mapsImages[name]) {
             return MapArgumentType.mapsImages[name]

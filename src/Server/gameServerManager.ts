@@ -41,7 +41,7 @@ const create = ({id, name} : {id: number, name: string}) => {
                 name: name,
                 region: 'fra1',
                 size: 's-1vcpu-1gb',
-                image: 34250946,
+                image: 34257912,
                 // ssh_keys?: string[];
                 tags: [
                     getServerTag(),
