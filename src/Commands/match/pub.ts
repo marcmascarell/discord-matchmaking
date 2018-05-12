@@ -37,10 +37,6 @@ export default class PubCommand extends BaseCommand {
         let embed = new Discord.RichEmbed()
             .setTitle(`${utils.prettifyMapName(gameState.map)} (${gameState.players.length}/${gameState.maxplayers}) - ${gameState.name}`,)
             .setFooter(`Recommended TDM Public server`)
-            .addField(
-                'Address',
-                '`/connect ' + `${gameState.query.host}:${gameState.query.port}` + '`'
-            )
             .setColor('#9B59B6');
 
         if (playersSortedByFrags.length) {
@@ -51,6 +47,11 @@ export default class PubCommand extends BaseCommand {
                 }).join("\n")
             )
         }
+
+        embed.addField(
+            'Address',
+            '`/connect ' + `${gameState.query.host}:${gameState.query.port}` + '`'
+        )
 
         if (mapImage) {
             embed.setThumbnail(mapImage)
