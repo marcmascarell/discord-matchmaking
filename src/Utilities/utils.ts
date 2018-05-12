@@ -20,7 +20,7 @@ const getSlotsForMatch = (match : Match) => {
 
 /**
  *
- * @param match
+ * @param match map-carentan-S-slots-6-S-match-30
  */
 const getServerNameForMatch = (match : Match) => {
     const firstMap = match.maps.split(',')[0]
@@ -40,6 +40,12 @@ const getServerNameForMatch = (match : Match) => {
     name = name.slice(0, -3)
 
     return name
+}
+
+const prettifyMapName = (name) => {
+    return _.startCase(
+        name.replace('mp_', '').replace('_', '')
+    )
 }
 
 const getServers = () => {
@@ -108,5 +114,6 @@ export default {
     isGuildOnlyDev,
     isDevelopment,
     isProduction,
-    includes
+    includes,
+    prettifyMapName
 }
