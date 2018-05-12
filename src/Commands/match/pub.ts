@@ -38,16 +38,19 @@ export default class PubCommand extends BaseCommand {
             .setTitle(`${utils.prettifyMapName(gameState.map)} (${gameState.players.length}/${gameState.maxplayers}) - ${gameState.name}`,)
             .setFooter(`Recommended TDM Public server`)
             .addField(
+                'Address',
+                '`/connect ' + `${gameState.query.host}:${gameState.query.port}` + '`'
+            )
+            .setColor('#9B59B6');
+
+        if (playersSortedByFrags.length) {
+            embed.addField(
                 'Players',
                 _.map(playersSortedByFrags, (player) => {
                     return `${player.name.trim()} *(${player.frags})*`
                 }).join("\n")
             )
-            .addField(
-                'Address',
-                '`/connect ' + `${gameState.query.host}:${gameState.query.port}` + '`'
-            )
-            .setColor('#9B59B6');
+        }
 
         if (mapImage) {
             embed.setThumbnail(mapImage)
