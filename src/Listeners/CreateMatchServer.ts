@@ -3,62 +3,68 @@ import ServerCreated from '../Events/ServerCreated'
 import gameServerManager from '../Server/gameServerManager'
 import ServerLimitReached from '../Errors/ServerLimitReached'
 import Match from "../Models/Match"
+import firestore from "../firestore"
+import utils from "../Utilities/utils"
+import moment from "moment"
 
 export default class CreateMatchServer extends Listener {
 
 	handle({match} : {match: Match}) {
         const channel = match.getChannel()
+        const serverName = match.getServerName()
+        const gameServersCollection = firestore
+                                        .getClient()
+                                        .collection('gameservers')
+
+        gameServersCollection
+            .doc(serverName)
+            .set({
+                id: match.id,
+                name: serverName,
+                maps: match.maps.split(','),
+                slots: match.maxPlayers + 2,
+                password: utils.getPasswordForServer(serverName),
+                rcon: utils.getRconForServer(serverName),
+                status: 'creating',
+                creationRequestedAt: moment().toISOString(),
+            });
 
         gameServerManager
             .create({
                 id: match.id,
-                name: match.getServerName()
+                name: serverName
             })
             .then(() => {
-                console.log('Waiting for server')
+                gameServersCollection
+                    .where('name', '==', serverName) // server name allows us to distinguish between dev/prod
+                    .where('status', '==', 'online')
+                    .onSnapshot(async docSnapshot => {
+                        if (!docSnapshot.empty) {
+                            const server = docSnapshot.docs[0].data()
+                            const createdServer = await match.setServer(server)
 
-                const maxRetries = 30 // 5 minutes, normally it takes about 3 minutes but DO has shortages sometimes so we are a bit more patient
-                let retries  = 0
+                            console.log('createdServer', createdServer)
 
-                // Wait 1 minute before looking for the server
-                setTimeout(() => {
-                    const interval = setInterval(() => {
-                        match.isServerReady()
-                            .then(matchWithServer => {
-                                if (matchWithServer) {
-                                    new ServerCreated({
-                                        match: matchWithServer
-                                    })
-                                    // console.log('Server ready', matchWithServer)
-                                    //
-                                    // this.onServerCreated(channel, matchWithServer)
+                            await Match
+                                .query()
+                                .update({
+                                    server_id: createdServer.id
+                                })
+                                .where('id', match.id)
 
-                                    clearInterval(interval)
-                                    return
-                                }
+                            const matchWithServer = await Match.getFullMatchById(match.id)
 
-                                if (retries === maxRetries / 2) {
-                                    channel.send(`Waiting server for match ${match.id}... Hold on...`)
-                                }
-
-                                if (retries >= maxRetries) {
-                                    clearInterval(interval)
-                                    throw new Error("Looking for server max retries reached")
-                                }
-
-                                retries++
-                                console.log('Waiting for server loop...', retries)
+                            new ServerCreated({
+                                match: matchWithServer
                             })
-                            .catch(e => {
-                                channel.send(`Unable to create a server for match ${match.id} :(`)
+                        }
 
-                                console.log(e.stack)
-                                clearInterval(interval)
-                            })
-                    }, 10000)
-                }, 60000)
+                    }, err => {
+                        console.log(`Encountered error: ${err}`);
+                    });
             })
             .catch(e => {
+                console.log('Error server creation', e)
                 if (e instanceof ServerLimitReached) {
                     channel.send(`Unable to create a server for match ${match.id}. Server limit reached.`)
                 } else {

@@ -1,0 +1,12 @@
+{
+  "name": "matchbot-gameserver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "initServerConfig.js",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "firebase-admin": "^5.12.1",
+    "lodash": "^4.17.10"
+  }
+}

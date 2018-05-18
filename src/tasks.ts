@@ -19,6 +19,7 @@ const lookForDestroyableServers = () => {
         .query()
         .where('destroy_at', '<', moment().format('YYYY-MM-DD HH:mm:ss'))
         .where('destroyed_at', null)
+        .where('ip', '!=', null)
         .where('user_id', null) // user provided servers can't be destroyed
         .then(servers => {
             if (servers.length) {

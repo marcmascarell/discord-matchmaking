@@ -79,26 +79,6 @@ export default class Match extends Model {
         return utils.getServerNameForMatch(this)
     }
 
-    isServerReady() {
-        return utils.isServerReady(this.getServerName())
-            .then(async server => {
-                if (server) {
-                    const createdServer = await this.setServer(server)
-                    console.log('createdServer', createdServer)
-                    await Match
-                            .query()
-                            .update({
-                                server_id: createdServer.id
-                            })
-                            .where('id', this.id)
-
-                    return Match.getFullMatchById(this.id)
-                }
-
-                return server
-            })
-    }
-
     cancel(reason : string) {
         if (reason === Match.REMOVAL_REASONS.DESERTION) {
             new DeletedMatchDueToDesertion(this)
@@ -128,7 +108,7 @@ export default class Match extends Model {
             return false
         }
 
-        return this.server.status === 'ONLINE'
+        return this.server.status === 'online'
     }
 
     setServer(server: any) {
@@ -138,11 +118,11 @@ export default class Match extends Model {
             .query()
             .insertGraph({
                 name: serverName,
-                ip: server.serverIP,
+                ip: server.ip,
                 user_id: null,
-                password: utils.getPasswordForServer(serverName),
-                rcon: utils.getRconForServer(serverName),
-                slots: utils.getSlotsForMatch(this),
+                password: server.password,
+                rcon: server.rcon,
+                slots: server.slots,
                 creation_request_at: null, // todo?
                 provisioned_at: moment().format('YYYY-MM-DD HH:mm:ss'),
                 status: server.status,
