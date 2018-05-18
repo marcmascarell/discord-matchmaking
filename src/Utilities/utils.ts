@@ -14,32 +14,12 @@ const getPasswordForServer = (serverName : string) => {
     return crypto.createHash('md5').update(serverName + secrets.passwordSalt).digest("hex").substring(2, 7)
 }
 
-const getSlotsForMatch = (match : Match) => {
-    return match.maxPlayers + 2
-}
-
 /**
  *
  * @param match map-carentan-S-slots-6-S-match-30
  */
 const getServerNameForMatch = (match : Match) => {
-    const firstMap = match.maps.split(',')[0]
-
-    const options = {
-        map: firstMap.toLowerCase(),
-        slots: getSlotsForMatch(match),
-        match: match.id,
-    }
-
-    let name = ''
-
-    _.each(options, (value : string, key : string) => {
-        name += `${key}-${value}-S-`
-    })
-
-    name = name.slice(0, -3)
-
-    return name
+    return `${isDevelopment ? 'Test-' : ''}Match-${match.id}`
 }
 
 const prettifyMapName = (name) => {
@@ -109,7 +89,6 @@ export default {
     getPasswordForServer,
     getServerNameForMatch,
     isServerReady,
-    getSlotsForMatch,
     getEnvironment,
     isGuildOnlyDev,
     isDevelopment,

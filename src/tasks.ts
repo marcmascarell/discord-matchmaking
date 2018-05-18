@@ -1,6 +1,7 @@
 import Server from './Models/Server'
 import Match from './Models/Match'
 const moment = require('moment');
+const Gamedig = require('gamedig');
 
 /**
  * Tasks to perform. Checked every minute
@@ -18,6 +19,7 @@ const lookForDestroyableServers = () => {
         .query()
         .where('destroy_at', '<', moment().format('YYYY-MM-DD HH:mm:ss'))
         .where('destroyed_at', null)
+        .where('ip', '!=', null)
         .where('user_id', null) // user provided servers can't be destroyed
         .then(servers => {
             if (servers.length) {
@@ -25,6 +27,26 @@ const lookForDestroyableServers = () => {
             }
 
             servers.forEach(async server => {
+                let isEmpty = true
+
+                try {
+                    const serverInfo = server.ip.split(':')
+
+                    const gameState = await Gamedig.query({
+                        type: 'cod',
+                        host: serverInfo[0], // Mugs server
+                        port: serverInfo[1]
+                    })
+
+                    isEmpty = gameState.players.length === 0
+                } catch (e) {
+                    console.log('Error querying server', e)
+                }
+
+                if (! isEmpty) {
+                    return;
+                }
+
                 const match = await server.getMatch()
 
                 match.cancel(Match.REMOVAL_REASONS.ENDED)

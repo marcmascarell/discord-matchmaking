@@ -1,6 +1,6 @@
 import Listener from './Listener'
 import Match from "../Models/Match"
-import {Client, Collection, Snowflake, VoiceChannel} from "discord.js"
+import {Client, VoiceChannel} from "discord.js"
 import bot from "../bot"
 import _ from "lodash"
 

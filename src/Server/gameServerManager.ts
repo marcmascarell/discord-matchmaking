@@ -4,11 +4,11 @@ const { DigitalOcean } = require('dots-wrapper');
 import secrets from '../secrets'
 import ServerLimitReached from '../Errors/ServerLimitReached'
 import utils from "../Utilities/utils"
+import _ from "lodash"
 
 const digitalOcean = new DigitalOcean(secrets.digitalOceanToken);
 
 // digitalOcean.Account.get().subscribe(account => console.log(account), err => console.log(err.message));
-// digitalOcean.Snapshot.list(0, 5).subscribe(account => console.log(account), err => console.log(err.message));
 
 const serverLimit = 3
 
@@ -27,6 +27,22 @@ const isLimitReached = () => {
     })
 }
 
+const getLatestSnapshot = () => {
+    return new Promise((resolve, reject) => {
+        digitalOcean
+            .Snapshot.list(0, 5)
+            .subscribe(
+                response => {
+                    const latestSnapshot = _.last(response.items)
+
+                    console.log('latestSnapshot', latestSnapshot)
+
+                    resolve(latestSnapshot)
+                },
+                err => console.log(err.message));
+    })
+}
+
 const create = ({id, name} : {id: number, name: string}) => {
     const match = {id, name}
     console.log(`Creating server for match #${match.id}...`)
@@ -41,7 +57,7 @@ const create = ({id, name} : {id: number, name: string}) => {
                 name: name,
                 region: 'fra1',
                 size: 's-1vcpu-1gb',
-                image: 34257912,
+                image: 34460940,
                 // ssh_keys?: string[];
                 tags: [
                     getServerTag(),
@@ -95,7 +111,8 @@ const destroy = (match : Match) => {
 export default {
     create,
     destroy,
-    isLimitReached
+    isLimitReached,
+    getLatestSnapshot
 }
 
 

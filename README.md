@@ -13,7 +13,7 @@ Features
 - Game servers creation
     - Only COD(1) supported for now. 
     - Provisioned (@DigitalOcean) for the match when all slots are filled and players get a private message with the server credentials to join
-- Game servers are destroyed after some time
+- Game servers are destroyed after some time if the server is empty
 - Voice channels are created for the match and destroyed after some time
 - Admins can request info for matches (included sensitive information like password and rcon)
 - Matches get erased after a period of inactivity if they were not completed
