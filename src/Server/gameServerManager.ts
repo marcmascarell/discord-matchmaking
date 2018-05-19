@@ -5,6 +5,8 @@ import secrets from '../secrets'
 import ServerLimitReached from '../Errors/ServerLimitReached'
 import utils from "../Utilities/utils"
 import _ from "lodash"
+import firestore from "../firestore"
+import moment from "moment"
 
 const digitalOcean = new DigitalOcean(secrets.digitalOceanToken);
 
@@ -43,9 +45,20 @@ const getLatestSnapshot = () => {
     })
 }
 
-const create = ({id, name} : {id: number, name: string}) => {
-    const match = {id, name}
-    console.log(`Creating server for match #${match.id}...`)
+/**
+ *
+ * @param {string} name
+ * @param {id?: number; maps: Array<string>; slots: number} options
+ * @returns {Promise<any>}
+ */
+const create = (
+    name: string,
+    options : {
+        id?: number,
+        maps: Array<string>,
+        slots: number,
+    }
+) => {
     return new Promise((resolve, reject) => {
         isLimitReached()
         .then(isLimitReached => {
@@ -53,15 +66,33 @@ const create = ({id, name} : {id: number, name: string}) => {
                 throw new ServerLimitReached()
             }
 
+            const gameServersCollection = firestore
+                .getClient()
+                .collection('gameservers')
+
+            gameServersCollection
+                .doc(name)
+                .set(Object.assign(
+                    {},
+                    {
+                        name,
+                        password: utils.getPasswordForServer(name),
+                        rcon: utils.getRconForServer(name),
+                        status: 'creating',
+                        creationRequestedAt: moment().toISOString(),
+                    },
+                    options
+                ));
+
             digitalOcean.Droplet.create({
                 name: name,
                 region: 'fra1',
                 size: 's-1vcpu-1gb',
-                image: 34460940,
+                image: 34490469,
                 // ssh_keys?: string[];
                 tags: [
                     getServerTag(),
-                    getMatchTag(match)
+                    name
                 ]
             }).subscribe((server : any) => {
                 if (server.name) {
@@ -83,11 +114,6 @@ const getServerTag = () => {
     return utils.isDevelopment() ? `test-codserver` : `codserver`
 }
 
-const getMatchTag = (match) => {
-    // Avoid dev environment from interfere official servers
-    return utils.isDevelopment() ? `test-match-${match.id}` : `match-${match.id}`
-}
-
 const destroy = (match : Match) => {
     console.log('server to destroy', match.server)
     console.log('from match', match)
@@ -98,7 +124,7 @@ const destroy = (match : Match) => {
             return;
         }
 
-        digitalOcean.Droplet.delete(getMatchTag(match)).subscribe(() => {
+        digitalOcean.Droplet.delete(utils.getServerNameForMatch(match)).subscribe(() => {
             console.log('droplet delete', match.id)
             resolve()
         }, (err: Error) => {

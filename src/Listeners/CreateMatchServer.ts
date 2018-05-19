@@ -4,37 +4,26 @@ import gameServerManager from '../Server/gameServerManager'
 import ServerLimitReached from '../Errors/ServerLimitReached'
 import Match from "../Models/Match"
 import firestore from "../firestore"
-import utils from "../Utilities/utils"
-import moment from "moment"
 
 export default class CreateMatchServer extends Listener {
 
 	handle({match} : {match: Match}) {
         const channel = match.getChannel()
         const serverName = match.getServerName()
-        const gameServersCollection = firestore
-                                        .getClient()
-                                        .collection('gameservers')
 
-        gameServersCollection
-            .doc(serverName)
-            .set({
-                id: match.id,
-                name: serverName,
-                maps: match.maps.split(','),
-                slots: match.maxPlayers + 2,
-                password: utils.getPasswordForServer(serverName),
-                rcon: utils.getRconForServer(serverName),
-                status: 'creating',
-                creationRequestedAt: moment().toISOString(),
-            });
+        console.log(`Creating server for match #${match.id}...`)
 
         gameServerManager
-            .create({
+            .create(serverName, {
                 id: match.id,
-                name: serverName
+                maps: match.maps.split(','),
+                slots: match.maxPlayers + 2,
             })
             .then(() => {
+                const gameServersCollection = firestore
+                    .getClient()
+                    .collection('gameservers')
+
                 gameServersCollection
                     .where('name', '==', serverName) // server name allows us to distinguish between dev/prod
                     .where('status', '==', 'online')

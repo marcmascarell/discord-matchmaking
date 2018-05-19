@@ -14,12 +14,8 @@ const getPasswordForServer = (serverName : string) => {
     return crypto.createHash('md5').update(serverName + secrets.passwordSalt).digest("hex").substring(2, 7)
 }
 
-/**
- *
- * @param match map-carentan-S-slots-6-S-match-30
- */
-const getServerNameForMatch = (match : Match) => {
-    return `${isDevelopment ? 'Test-' : ''}Match-${match.id}`
+const getServerNameForMatch = ({ id }) => {
+    return `${isDevelopment ? 'Test-' : ''}Match-${id}`
 }
 
 const prettifyMapName = (name) => {
