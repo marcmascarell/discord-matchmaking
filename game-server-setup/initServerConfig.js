@@ -105,13 +105,15 @@ const getConfigFromServerStore = () => {
 
 const applyGameSpecificConfig = () => {
     return new Promise((resolve, reject) => {
+        const matchName = serverConfig.id ? `#${serverConfig.id.value}` : serverName.replace(/-/g, ' ')
         const gameServerCfg = `
-set sv_hostname "COD1 Community (discord.gg/yaKkZMF) ^1- ^7Match #${serverConfig.id.value}"
-set scr_motd "Server provided by COD1 Community. Join ^1discord.gg/yaKkZMF"
+set sv_hostname "COD Rebirth ^1- ^7Match ${matchName}"
+set scr_motd "Server provided by COD Rebirth. Join the COD1 Community: ^1discord.gg/yaKkZMF"
 set rconpassword "${serverConfig.rcon.value}"
 set g_allowVoteMap "1"
 set g_password "${serverConfig.password.value}"
 set g_privatepassword "${secrets.server.privatepassword}"
+set sv_privateclients "2"
     `
         try {
             console.log('Replacing game specific config file ('+gameSpecificServerConfigPath+')...')
