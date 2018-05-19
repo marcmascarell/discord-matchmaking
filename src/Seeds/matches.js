@@ -15,7 +15,7 @@ exports.seed = function(knex, Promise) {
                     last_activity_at: moment().format('YYYY-MM-DD HH:mm:ss'),
                     guild_id: '439806672911859713',
                     channel_id: '439806672911859717',
-                    maps: 'carentan,harbor'
+                    maps: 'germantown,carentan,harbor'
                 },
                 {
                     id: 2,
