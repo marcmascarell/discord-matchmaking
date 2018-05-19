@@ -39,16 +39,20 @@ export default class MapArgumentType extends ArgumentType {
 
     static get maps() : Array<string> {
         return [
+            // Active map pool 7 maps (7/11)
             'Carentan',
             'Dawnville',
             'Harbor',
             'Neuville',
             'Railyard',
+            'Depot',
+            'GermanTown',
 
+            // 'Container',
+            // 'Priory',
             // 'Brecourt',
-            // 'Depot',
             // 'Tigertown',
-            //
+
             // 'Pavlov',
             // 'POW Camp',
             // 'Stalingrad',

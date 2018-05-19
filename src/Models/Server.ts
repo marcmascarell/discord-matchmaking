@@ -50,7 +50,8 @@ export default class Server extends Model {
                         .query()
                         .where('id', match.server.id)
                         .update({
-                            destroyed_at: moment().format('YYYY-MM-DD HH:mm:ss')
+                            destroyed_at: moment().format('YYYY-MM-DD HH:mm:ss'),
+                            status: 'destroyed'
                         })
             })
             .catch((e : Error) => {

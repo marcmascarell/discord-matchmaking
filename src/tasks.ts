@@ -19,7 +19,7 @@ const lookForDestroyableServers = () => {
         .query()
         .where('destroy_at', '<', moment().format('YYYY-MM-DD HH:mm:ss'))
         .where('destroyed_at', null)
-        .where('ip', '!=', null)
+        .whereNotNull('ip')
         .where('user_id', null) // user provided servers can't be destroyed
         .then(servers => {
             if (servers.length) {
@@ -34,7 +34,7 @@ const lookForDestroyableServers = () => {
 
                     const gameState = await Gamedig.query({
                         type: 'cod',
-                        host: serverInfo[0], // Mugs server
+                        host: serverInfo[0],
                         port: serverInfo[1]
                     })
 
