@@ -1,11 +1,10 @@
-export default {
+const secrets = {
     passwordSalt: '',
     rconSalt: '',
     discordOwner: '',
     discordToken: '',
     digitalOceanToken: '',
     jsonStore: '',
-
     discordAdmins: [],
     discordModerators: [],
 
@@ -14,5 +13,9 @@ export default {
         development: [
             '' // guild id
         ]
-    }
+    },
+
+    firebase: {}
 }
+
+export default secrets
