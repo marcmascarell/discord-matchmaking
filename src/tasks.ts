@@ -7,11 +7,18 @@ const Gamedig = require('gamedig');
  * Tasks to perform. Checked every minute
  */
 const init = () => {
+    const fiveMinutes = 300000
+    const oneMinute = 60000
+
     setInterval(() => {
         // console.log('Tasks running...')
         lookForDestroyableServers()
         cancelNonStartedInactiveMatches()
-    }, 60000)
+    }, oneMinute)
+
+    // setInterval(() => {
+    //     // check for streams
+    // }, fiveMinutes)
 }
 
 const lookForDestroyableServers = () => {

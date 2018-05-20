@@ -12,11 +12,11 @@ export default class PubCommand extends BaseCommand {
             name: 'pub',
             memberName: 'pub',
             description: 'Recommended public server status.',
-            group: 'match',
+            group: 'misc',
         });
     }
 
-    async run(message : CommandMessage, {id} : {id: number}) {
+    async run(message : CommandMessage) {
         const channel = message.channel
         let gameState
 

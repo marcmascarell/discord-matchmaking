@@ -24,6 +24,7 @@ const init = () => {
             // Registers your custom command groups
             .registerGroups([
                 ['match', 'Matchmaking commands'],
+                ['misc', 'Other useful commands'],
                 // ['some', 'Some group'],
                 // ['other', 'Some other group']
             ])
@@ -31,7 +32,8 @@ const init = () => {
             .registerTypesIn(path.join(__dirname, 'Types'))
 
             // Registers all of your commands in the ./commands/ directory
-            .registerCommandsIn(path.join(__dirname, 'Commands/match'));
+            .registerCommandsIn(path.join(__dirname, 'Commands/misc'))
+            .registerCommandsIn(path.join(__dirname, 'Commands/match'))
 
         // Create an event listener for new guild members
         client.on('guildMemberAdd', member => {

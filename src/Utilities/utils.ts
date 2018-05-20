@@ -1,10 +1,10 @@
-import Match from "../Models/Match"
 import secrets from "../secrets"
 import {Guild, GuildResolvable} from "discord.js"
-
-const https = require('https')
-const _ = require('lodash');
-const crypto = require('crypto');
+import moment from 'moment'
+import request from 'request'
+import _ from 'lodash'
+import https from 'https'
+import crypto from 'crypto'
 
 const getRconForServer = (serverName : string) => {
     return crypto.createHash('md5').update(serverName + secrets.rconSalt).digest("hex")
@@ -68,6 +68,55 @@ const isGuildOnlyDev = (guild : GuildResolvable) => {
     return includes(secrets.guilds.development, id)
 }
 
+/**
+ *
+ * @param {boolean} onlyStartedRecently
+ * @returns {Promise<any>}
+ */
+const getStreams = (onlyStartedRecently = false) => {
+    return new Promise((resolve, reject) => {
+        const options = {
+            url: 'https://api.twitch.tv/helix/streams',
+            headers: {
+                'Client-ID': secrets.twitch.clientId
+            },
+            qs: {
+                user_login: secrets.streamers,
+                useQuerystring: true
+            }
+        };
+
+        request(options, function (error, response, body) {
+            if (!response || response.statusCode !== 200) {
+                return reject('Unable to get streams.')
+            }
+
+            const result = JSON.parse(body)
+
+            const streams = result.data.filter(stream => {
+                // COD
+                if (stream.game_id !== '1494') {
+                    return false;
+                }
+
+                // if (stream.type !== 'live') {
+                //     return false;
+                // }
+
+                if (onlyStartedRecently) {
+                    const minutesFromStart = moment().diff(moment(stream.started_at), 'minutes')
+
+                    return minutesFromStart < 5
+                }
+
+                return true
+            })
+
+            resolve(streams)
+        });
+    })
+}
+
 // We don't want to use _.includes because it searches for substring
 // Native .includes() isn't well supported yet
 const includes = (collection, value) => {
@@ -90,5 +139,6 @@ export default {
     isDevelopment,
     isProduction,
     includes,
-    prettifyMapName
+    prettifyMapName,
+    getStreams
 }
