@@ -3,7 +3,7 @@ const Discord = require('discord.js');
 
 export default class NotifyStreams extends Listener {
 
-	handle(channel, streams, title = `**Currenyly streaming**`) {
+	handle(channel, streams, title = `**Currently streaming**`) {
         let embedTitle = new Discord.RichEmbed()
             .setTitle(title)
             .setColor('#4b367c');
