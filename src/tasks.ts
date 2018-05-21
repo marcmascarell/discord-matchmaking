@@ -19,17 +19,17 @@ const init = () => {
         cancelNonStartedInactiveMatches()
     }, oneMinute)
 
-    setInterval(async () => {
-        const streams : any = await utils.getStreams(true)
-
-        if (streams.length > 0) return
-
-        const channel = await bot.getChannel('COD1 Community', 'general')
-
-        if (! channel) return
-
-        new NotifyStreams().handle(channel, streams, 'New stream started right now!')
-    }, threeMinute)
+    // setInterval(async () => {
+    //     const streams : any = await utils.getStreams(true)
+    //
+    //     if (streams.length > 0) return
+    //
+    //     const channel = await bot.getChannel('COD1 Community', 'general')
+    //
+    //     if (! channel) return
+    //
+    //     new NotifyStreams().handle(channel, streams, 'New stream started right now!')
+    // }, threeMinute)
 }
 
 const lookForDestroyableServers = () => {
