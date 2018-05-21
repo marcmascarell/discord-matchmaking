@@ -106,7 +106,7 @@ const getStreams = (onlyStartedRecently = false) => {
                 if (onlyStartedRecently) {
                     const minutesFromStart = moment().diff(moment(stream.started_at), 'minutes')
 
-                    return minutesFromStart < 5
+                    return minutesFromStart < 3
                 }
 
                 return true
