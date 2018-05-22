@@ -11,7 +11,7 @@ const Gamedig = require('gamedig');
  */
 const init = () => {
     const oneMinute = 60000
-    const threeMinute = 180000
+    const threeMinutes = 180000
 
     setInterval(() => {
         // console.log('Tasks running...')
@@ -19,17 +19,17 @@ const init = () => {
         cancelNonStartedInactiveMatches()
     }, oneMinute)
 
-    // setInterval(async () => {
-    //     const streams : any = await utils.getStreams(true)
-    //
-    //     if (streams.length > 0) return
-    //
-    //     const channel = await bot.getChannel('COD1 Community', 'general')
-    //
-    //     if (! channel) return
-    //
-    //     new NotifyStreams().handle(channel, streams, 'New stream started right now!')
-    // }, threeMinute)
+    setInterval(async () => {
+        const streams : any = await utils.getStreams(true)
+
+        if (streams.length === 0) return
+
+        const channel = await bot.getChannel('COD1 Community', 'general')
+
+        if (! channel) return
+
+        new NotifyStreams().handle(channel, streams, 'New stream started right now!')
+    }, threeMinutes)
 }
 
 const lookForDestroyableServers = () => {
