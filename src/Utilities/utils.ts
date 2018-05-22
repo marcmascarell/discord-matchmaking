@@ -3,7 +3,6 @@ import {Guild, GuildResolvable} from "discord.js"
 import moment from 'moment'
 import request from 'request'
 import _ from 'lodash'
-import https from 'https'
 import crypto from 'crypto'
 
 const getRconForServer = (serverName : string) => {
@@ -22,44 +21,6 @@ const prettifyMapName = (name) => {
     return _.startCase(
         name.replace('mp_', '').replace('_', '')
     )
-}
-
-const getServers = () => {
-    const url = `https://www.jsonstore.io/${secrets.jsonStore}?v=${+ new Date()}`
-
-    return new Promise((resolve, reject) => {
-        https.get(url, function(res : any){
-            let body = '';
-
-            res.on('data', function(chunk : any){
-                body += chunk;
-            });
-
-            res.on('end', function(){
-                const parsedBody = JSON.parse(body)
-
-                const servers = parsedBody.result && parsedBody.result.servers ? parsedBody.result.servers : {}
-                resolve(servers)
-            });
-        }).on('error', function(e : Error){
-            console.log("Got an error: ", e);
-            reject(e)
-        });
-    })
-}
-
-const isServerReady = (serverName : string) => {
-    return new Promise((resolve, reject) => {
-        getServers()
-            .then((servers : any) => {
-                if (servers[serverName] !== undefined) {
-                    return resolve(servers[serverName])
-                }
-
-                resolve(false)
-            })
-            .catch(reject)
-    })
 }
 
 const isGuildOnlyDev = (guild : GuildResolvable) => {
@@ -133,7 +94,6 @@ export default {
     getRconForServer,
     getPasswordForServer,
     getServerNameForMatch,
-    isServerReady,
     getEnvironment,
     isGuildOnlyDev,
     isDevelopment,
