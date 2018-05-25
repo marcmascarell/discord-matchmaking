@@ -18,7 +18,7 @@ Features
 - Admins can request info for matches (included sensitive information like password and rcon)
 - Matches get erased after a period of inactivity if they were not completed
 - Matches get erased when all players leave
-
+- Checks for game streams and alerts when a stream starts
 
 Running the bot
 ----------

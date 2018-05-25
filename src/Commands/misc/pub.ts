@@ -13,6 +13,11 @@ export default class PubCommand extends BaseCommand {
             memberName: 'pub',
             description: 'Recommended public server status.',
             group: 'misc',
+            aliases: [
+                'pubs',
+                'public',
+                'publics',
+            ]
         });
     }
 

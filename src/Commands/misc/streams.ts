@@ -10,6 +10,11 @@ export default class StreamsCommand extends BaseCommand {
             memberName: 'streams',
             description: 'COD streams.',
             group: 'misc',
+            aliases: [
+                'stream',
+                'streaming',
+                'streamings',
+            ]
         });
     }
 
