@@ -11,7 +11,7 @@ export default class MatchCommand extends BaseCommand {
             memberName: 'match',
             description: 'Start a match.',
             group: 'match',
-
+            aliases: ['mix'],
             // args: [
             //     {
             //         key: 'dank',
@@ -94,9 +94,9 @@ export default class MatchCommand extends BaseCommand {
         )
 
         if (!match) {
-            return message.reply(`Could not create the mix... Please, contact an admin`);
+            return message.reply(`Could not create the match... Please, contact an admin`);
         }
 
-        return message.reply(`New mix created!`);
+        return message.reply(`New match created!`);
     }
 };

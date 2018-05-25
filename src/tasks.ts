@@ -1,5 +1,8 @@
 import Server from './Models/Server'
 import Match from './Models/Match'
+import bot from './bot'
+import NotifyStreams from "./Listeners/NotifyStreams"
+import utils from "./Utilities/utils"
 const moment = require('moment');
 const Gamedig = require('gamedig');
 
@@ -7,11 +10,26 @@ const Gamedig = require('gamedig');
  * Tasks to perform. Checked every minute
  */
 const init = () => {
+    const oneMinute = 60000
+    const threeMinutes = 180000
+
     setInterval(() => {
         // console.log('Tasks running...')
         lookForDestroyableServers()
         cancelNonStartedInactiveMatches()
-    }, 60000)
+    }, oneMinute)
+
+    setInterval(async () => {
+        const streams : any = await utils.getStreams(true)
+
+        if (streams.length === 0) return
+
+        const channel = await bot.getChannel('COD1 Community', 'general')
+
+        if (! channel) return
+
+        new NotifyStreams().handle(channel, streams, 'New stream started right now!')
+    }, threeMinutes)
 }
 
 const lookForDestroyableServers = () => {

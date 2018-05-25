@@ -11,7 +11,7 @@ export default class ListCommand extends BaseCommand {
             memberName: 'list',
             description: 'List of current matches.',
             group: 'match',
-
+            aliases: ['matches'],
             args: [
                 {
                     key: 'showReadyMatches',

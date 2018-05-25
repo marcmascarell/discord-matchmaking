@@ -1,4 +1,5 @@
-import gameServerManager from "./Server/gameServerManager"
+import gameServerManager from './Server/gameServerManager'
+import secrets from "./secrets"
 
 const express = require('express')
 const app = express()
@@ -8,15 +9,28 @@ app.get('/', (request, response) => {
     response.send('Hello from Express!')
 })
 
-app.get('/api/choice', function (req, res) {
-    console.log('id: ' + req.query.id);
+app.post('/api/server/create', function (req, res) {
+    const token = req.query.token
+    const map = req.query.map || 'carentan'
+    const slots = req.query.slots || 12
+    const name = req.query.name || `Server-${+ new Date()}`
 
-    gameServerManager.create(`Custom-Server`, {
-        maps: ['carentan'],
-        slots: 4,
+    if (token !== secrets.apiToken) {
+        res.send('Invalid token!')
+
+        return;
+    }
+
+    gameServerManager.create(name, {
+        maps: [map],
+        slots: slots,
+    })
+
+    res.send({
+        creating: name,
+        result: 'ok'
     })
 });
-
 
 app.listen(port, (err) => {
     if (err) {
