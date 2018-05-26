@@ -35,47 +35,51 @@ const isGuildOnlyDev = (guild : GuildResolvable) => {
  * @returns {Promise<any>}
  */
 const getStreams = (onlyStartedRecently = false) => {
-    return new Promise((resolve, reject) => {
-        const options = {
-            url: 'https://api.twitch.tv/helix/streams',
-            headers: {
-                'Client-ID': secrets.twitch.clientId
-            },
-            qs: {
-                user_login: secrets.streamers,
-                useQuerystring: true
-            }
-        };
+    return new Promise((resolve, reject) =>
+        {
+            const options = {
+                url: 'https://api.twitch.tv/helix/streams',
+                headers: {
+                    'Client-ID': secrets.twitch.clientId
+                },
+                qs: {
+                    user_login: secrets.streamers,
+                    useQuerystring: true
+                }
+            };
 
-        request(options, function (error, response, body) {
-            if (!response || response.statusCode !== 200) {
-                return reject('Unable to get streams.')
-            }
-
-            const result = JSON.parse(body)
-
-            const streams = result.data.filter(stream => {
-                // COD
-                if (stream.game_id !== '1494') {
-                    return false;
+            request(options, function (error, response, body) {
+                if (!response || response.statusCode !== 200) {
+                    return reject('Unable to get streams.')
                 }
 
-                // if (stream.type !== 'live') {
-                //     return false;
-                // }
+                const result = JSON.parse(body)
 
-                if (onlyStartedRecently) {
-                    const minutesFromStart = moment().diff(moment(stream.started_at), 'minutes')
+                const streams = result.data.filter(stream => {
+                    // COD
+                    if (stream.game_id !== '1494') {
+                        return false;
+                    }
 
-                    return minutesFromStart < 3
-                }
+                    // if (stream.type !== 'live') {
+                    //     return false;
+                    // }
 
-                return true
-            })
+                    if (onlyStartedRecently) {
+                        const minutesFromStart = moment().diff(moment(stream.started_at), 'minutes')
 
-            resolve(streams)
-        });
-    })
+                        return minutesFromStart < 3
+                    }
+
+                    return true
+                })
+
+                resolve(streams)
+            });
+        })
+        .catch(e => {
+            console.log(e.stack)
+        })
 }
 
 // We don't want to use _.includes because it searches for substring
