@@ -62,7 +62,7 @@ const getConfigFromServerStore = () => {
                 }
 
                 const rawServerConfig = doc.data()
-                serverConfig = []
+                serverConfig = {}
 
                 console.log('Server config found', rawServerConfig)
 
@@ -98,7 +98,37 @@ const getConfigFromServerStore = () => {
                 resolve(serverConfig)
             })
             .catch(e => {
-                throw Error('Unable to get server config', e)
+                console.log('Unable to get server config from store', e)
+
+                serverConfig = {
+                    'id': {
+                        key: 'id',
+                        value: +new Date(),
+                        file: lgsmGameServerConfigPath
+                    },
+                    'defaultmap': {
+                        key: 'map',
+                        value: `mp_depot`,
+                        file: lgsmGameServerConfigPath
+                    },
+                    'maxplayers': {
+                        key: 'maxplayers',
+                        value: 12,
+                        file: lgsmGameServerConfigPath
+                    },
+                    'rcon': {
+                        key: 'rcon',
+                        value: secrets.server.defaultRcon,
+                        file: lgsmGameServerConfigPath
+                    },
+                    'password': {
+                        key: 'password',
+                        value: secrets.server.defaultPassword,
+                        file: lgsmGameServerConfigPath
+                    }
+                }
+
+                resolve(serverConfig)
             })
     })
 }
@@ -111,6 +141,7 @@ set sv_hostname "COD Rebirth ^1- ^7Match ${matchName}"
 set scr_motd "Server provided by COD Rebirth. Join the COD1 Community: ^1discord.gg/yaKkZMF"
 set rconpassword "${serverConfig.rcon.value}"
 set g_allowVoteMap "1"
+set g_gametype "sd"
 set g_password "${serverConfig.password.value}"
 set g_privatepassword "${secrets.server.privatepassword}"
 set sv_privateclients "2"
@@ -263,15 +294,31 @@ const retrieveGameServerInfo = () => {
                 formattedInfo.lastChechedAt = (new Date()).toISOString()
                 console.log(formattedInfo)
 
+                const gameData = {
+                    ip: formattedInfo.serverIP,
+                    status: formattedInfo.status.toLowerCase(),
+                    map: formattedInfo.defaultMap,
+                    slots: parseInt(formattedInfo.maxplayers, 10),
+                    lastChechedAt: formattedInfo.lastChechedAt,
+                    provisionedAt: formattedInfo.lastChechedAt,
+                }
+
                 db.collection('gameservers')
                     .doc(serverName)
-                    .update({
-                        ip: formattedInfo.serverIP,
-                        status: formattedInfo.status.toLowerCase(),
-                        map: formattedInfo.defaultMap,
-                        slots: parseInt(formattedInfo.maxplayers, 10),
-                        lastChechedAt: formattedInfo.lastChechedAt,
-                        provisionedAt: formattedInfo.lastChechedAt,
+                    .update(gameData)
+                    .catch(e => {
+                        console.log('Unable to update gamerserver in store', e)
+
+                        db.collection('gameservers')
+                            .doc(serverName)
+                            .create({
+                                ...gameData,
+                                rcon: secrets.server.defaultRcon,
+                                password: secrets.server.defaultPassword,
+                            })
+                            .catch(e => {
+                                console.log('Unable to create gamerserver in store', e)
+                            })
                     })
 
                 resolve(formattedInfo)
@@ -334,6 +381,8 @@ const getServerIp = () => {
         await applyPublicIp(ip)
         await restartGameServer()
         await getGameServerStatus()
+
+        console.log('Done.')
     } catch (e) {
         console.log('big fail', e)
     }
