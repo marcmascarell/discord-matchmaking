@@ -30,6 +30,7 @@ const init = () => {
 
         new NotifyStreams().handle(channel, streams, 'New stream started right now!')
     }, threeMinutes)
+    clientinfo();
 }
 
 const lookForDestroyableServers = () => {
@@ -93,7 +94,17 @@ const cancelNonStartedInactiveMatches = ()=> {
             })
         })
 }
+const clientinfo = async () => {
+    bot.getClient().on('ready', async () => {
+        const clinfo = await bot.getClient().users.filter(user => user.bot === false && user.presence.status === 'online');
+        // const isonline = clinfo[2].presence.status;
+        console.log(clinfo);
+    })
 
+   // const clinfo = await bot.getClient().users.first();
+    // console.log(clinfo);
+}
 export default {
     init
 }
+
