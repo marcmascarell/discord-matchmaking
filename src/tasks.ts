@@ -1,5 +1,6 @@
 import Server from './Models/Server'
 import Match from './Models/Match'
+import LogUserActivity from './Models/LogUserActivity'
 import bot from './bot'
 import NotifyStreams from "./Listeners/NotifyStreams"
 import utils from "./Utilities/utils"
@@ -17,6 +18,8 @@ const init = () => {
         // console.log('Tasks running...')
         lookForDestroyableServers()
         cancelNonStartedInactiveMatches()
+        clientinfo()
+
     }, oneMinute)
 
     setInterval(async () => {
@@ -95,14 +98,31 @@ const cancelNonStartedInactiveMatches = ()=> {
         })
 }
 const clientinfo = async () => {
-    bot.getClient().on('ready', async () => {
-        const clinfo = await bot.getClient().users.filter(user => user.bot === false && user.presence.status === 'online');
-        // const isonline = clinfo[2].presence.status;
-        console.log(clinfo);
-    })
+    if (!bot.isReady()) {
+        return
+    }
 
-   // const clinfo = await bot.getClient().users.first();
-    // console.log(clinfo);
+    const onlineplayers = await bot.getClient().users.filter(user => {
+        return user.bot === false && user.presence.status !== 'offline'
+    });
+
+    onlineplayers.forEach(async onlinedata => {
+        if (onlinedata.presence.game === null) {
+        }
+        else {
+            console.log(onlinedata.username, onlinedata.id);
+        }
+
+        await LogUserActivity
+            .query()
+            .insert(
+                {
+                    id: onlinedata.id,
+                    game: onlinedata.presence.game ? onlinedata.presence.game.name : null,
+                    username: onlinedata.username,
+                    created_at: moment().format('YYYY-MM-DD HH:mm:ss')
+                })
+    });
 }
 export default {
     init
