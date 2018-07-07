@@ -96,7 +96,7 @@ export default class PubCommand extends BaseCommand {
             channel.send(embed)
         })
 
-        message.say('Public servers:')
+        return message.say('Public servers:')
     }
 
 };
