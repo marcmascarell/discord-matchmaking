@@ -1,4 +1,5 @@
 import {CommandMessage, CommandoClient} from "discord.js-commando"
+
 import BaseCommand from '../BaseCommand'
 import MapType from "../../Types/MapArgumentType"
 import utils from "../../Utilities/utils"
@@ -94,5 +95,8 @@ export default class PubCommand extends BaseCommand {
 
             channel.send(embed)
         })
+
+        message.say('Public servers:')
     }
+
 };
