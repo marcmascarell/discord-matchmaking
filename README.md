@@ -20,7 +20,7 @@ Features
 - Matches get erased when all players leave
 - Checks for game streams and alerts when a stream starts
 
-Running the bot
+Running the bot (Node.js 9.x)
 ----------
 - `npm install`
 - Fill the required tokens in `secrets.ts` (rename the `secrets.examples.ts`)
@@ -43,6 +43,15 @@ bot.getClient().on('ready', async () => {
 })
 ```
 (You can erase the code block when you are done with the invitation)
+
+Utilities
+----------
+
+Get latest server snapshot
+`node dist/Utilities/getSnap.js`
+
+Get server passwords
+`node dist/Utilities/getPasswords.js {serverName}`
 
 Caveats
 ----------
@@ -69,6 +78,8 @@ To rollback the last batch of migrations:
 
 `knex seed:run`
 
+Refresh:
+`knex migrate:rollback && knex migrate:latest && knex seed:run`
 
 License
 ----------

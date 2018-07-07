@@ -28,15 +28,19 @@ const init = () => {
 }
 
 const lookForNewStreams = async () => {
-    const streams : any = await utils.getStreams(true)
+    try {
+        const streams : any = await utils.getStreams(true)
 
-    if (streams.length === 0) return
+        if (streams.length === 0) return
 
-    const channel = await bot.getChannel('COD1 Community', 'general')
+        const channel = await bot.getChannel('COD1 Community', 'general')
 
-    if (! channel) return
+        if (! channel) return
 
-    new NotifyStreams().handle(channel, streams, 'New stream started right now!')
+        new NotifyStreams().handle(channel, streams, 'New stream started right now!')
+    } catch (e) {
+        console.log(e)
+    }
 }
 
 const lookForDestroyableServers = () => {

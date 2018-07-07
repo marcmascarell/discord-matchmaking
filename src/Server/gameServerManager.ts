@@ -82,13 +82,16 @@ const create = (
                         creationRequestedAt: moment().toISOString(),
                     },
                     options
-                ));
+                ))
+                .catch(e => {
+                    console.log('Failed to create server in store', e)
+                })
 
             digitalOcean.Droplet.create({
                 name: name,
                 region: 'fra1',
                 size: 's-1vcpu-1gb',
-                image: 34490469,
+                image: 34833901,
                 // ssh_keys?: string[];
                 tags: [
                     getServerTag(),
