@@ -18,22 +18,25 @@ const init = () => {
         // console.log('Tasks running...')
         lookForDestroyableServers()
         cancelNonStartedInactiveMatches()
-        clientinfo()
 
     }, oneMinute)
 
     setInterval(async () => {
-        const streams : any = await utils.getStreams(true)
-
-        if (streams.length === 0) return
-
-        const channel = await bot.getChannel('COD1 Community', 'general')
-
-        if (! channel) return
-
-        new NotifyStreams().handle(channel, streams, 'New stream started right now!')
+        logUsersActivity()
+        lookForNewStreams()
     }, threeMinutes)
-    clientinfo();
+}
+
+const lookForNewStreams = async () => {
+    const streams : any = await utils.getStreams(true)
+
+    if (streams.length === 0) return
+
+    const channel = await bot.getChannel('COD1 Community', 'general')
+
+    if (! channel) return
+
+    new NotifyStreams().handle(channel, streams, 'New stream started right now!')
 }
 
 const lookForDestroyableServers = () => {
@@ -97,33 +100,29 @@ const cancelNonStartedInactiveMatches = ()=> {
             })
         })
 }
-const clientinfo = async () => {
+
+const logUsersActivity = async () => {
     if (!bot.isReady()) {
         return
     }
 
-    const onlineplayers = await bot.getClient().users.filter(user => {
+    const onlineUsers = await bot.getClient().users.filter(user => {
         return user.bot === false && user.presence.status !== 'offline'
     });
 
-    onlineplayers.forEach(async onlinedata => {
-        if (onlinedata.presence.game === null) {
-        }
-        else {
-            console.log(onlinedata.username, onlinedata.id);
-        }
-
+    onlineUsers.forEach(async user => {
         await LogUserActivity
             .query()
             .insert(
                 {
-                    id: onlinedata.id,
-                    game: onlinedata.presence.game ? onlinedata.presence.game.name : null,
-                    username: onlinedata.username,
+                    id: user.id,
+                    game: user.presence.game ? user.presence.game.name : null,
+                    username: user.username,
                     created_at: moment().format('YYYY-MM-DD HH:mm:ss')
                 })
     });
 }
+
 export default {
     init
 }
