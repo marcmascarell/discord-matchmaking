@@ -4,6 +4,8 @@ import secrets from './secrets'
 import utils from './Utilities/utils'
 import {Guild} from "discord.js"
 
+let botReady = false
+
 const client = new Commando.Client({
     owner: secrets.discordOwner,
     unknownCommandResponse: utils.isDevelopment()
@@ -11,8 +13,12 @@ const client = new Commando.Client({
 
 const getClient = () => client
 
+const isReady = () => botReady
+
 const init = () => {
     client.on('ready', async () => {
+        botReady = true
+
         client.registry
             .registerDefaultTypes()
             .registerDefaultGroups()
@@ -56,11 +62,12 @@ const getChannel = async (guildName, channelName) => {
 
     if (!guild) return null
 
-    return await guild.channels.find(channel => channel.name === channelName);
+    return await guild.channels.find(channel => channel.name === channelName)
 }
 
 export default {
     init,
     getClient,
-    getChannel
+    getChannel,
+    isReady
 }
