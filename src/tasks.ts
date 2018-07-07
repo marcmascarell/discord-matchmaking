@@ -1,5 +1,6 @@
 import Server from './Models/Server'
 import Match from './Models/Match'
+import LogUserActivity from './Models/LogUserActivity'
 import bot from './bot'
 import NotifyStreams from "./Listeners/NotifyStreams"
 import utils from "./Utilities/utils"
@@ -17,23 +18,29 @@ const init = () => {
         // console.log('Tasks running...')
         lookForDestroyableServers()
         cancelNonStartedInactiveMatches()
+
     }, oneMinute)
 
     setInterval(async () => {
-        try {
-            const streams : any = await utils.getStreams(true)
-
-            if (streams.length === 0) return
-
-            const channel = await bot.getChannel('COD1 Community', 'general')
-
-            if (! channel) return
-
-            new NotifyStreams().handle(channel, streams, 'New stream started right now!')
-        } catch (e) {
-            console.log(e)
-        }
+        logUsersActivity()
+        lookForNewStreams()
     }, threeMinutes)
+}
+
+const lookForNewStreams = async () => {
+    try {
+        const streams : any = await utils.getStreams(true)
+
+        if (streams.length === 0) return
+
+        const channel = await bot.getChannel('COD1 Community', 'general')
+
+        if (! channel) return
+
+        new NotifyStreams().handle(channel, streams, 'New stream started right now!')
+    } catch (e) {
+        console.log(e)
+    }
 }
 
 const lookForDestroyableServers = () => {
@@ -98,6 +105,29 @@ const cancelNonStartedInactiveMatches = ()=> {
         })
 }
 
+const logUsersActivity = async () => {
+    if (!bot.isReady()) {
+        return
+    }
+
+    const onlineUsers = await bot.getClient().users.filter(user => {
+        return user.bot === false && user.presence.status !== 'offline'
+    });
+
+    onlineUsers.forEach(async user => {
+        await LogUserActivity
+            .query()
+            .insert(
+                {
+                    id: user.id,
+                    game: user.presence.game ? user.presence.game.name : null,
+                    username: user.username,
+                    created_at: moment().format('YYYY-MM-DD HH:mm:ss')
+                })
+    });
+}
+
 export default {
     init
 }
+
