@@ -1,11 +1,13 @@
 import Server from './Models/Server'
 import Match from './Models/Match'
-import LogUserActivity from './Models/LogUserActivity'
 import bot from './bot'
 import NotifyStreams from "./Listeners/NotifyStreams"
 import utils from "./Utilities/utils"
-const moment = require('moment');
 const Gamedig = require('gamedig');
+import LogUserActivity from './Models/LogUserActivity'
+import LogProcessedActivity from "./Models/LogProcessedActivity";
+const moment = require('moment');
+const _ = require('lodash');
 
 /**
  * Tasks to perform. Checked every minute
@@ -13,18 +15,22 @@ const Gamedig = require('gamedig');
 const init = () => {
     const oneMinute = 60000
     const threeMinutes = 180000
+    const oneDay = 86400000
 
     setInterval(() => {
         // console.log('Tasks running...')
         lookForDestroyableServers()
         cancelNonStartedInactiveMatches()
-
     }, oneMinute)
 
-    setInterval(async () => {
+    setInterval(() => {
         logUsersActivity()
         lookForNewStreams()
     }, threeMinutes)
+
+    setInterval(() => {
+        processActivity()
+    }, oneDay)
 }
 
 const lookForNewStreams = async () => {
@@ -124,6 +130,46 @@ const logUsersActivity = async () => {
                     username: user.username,
                     created_at: moment().format('YYYY-MM-DD HH:mm:ss')
                 })
+    });
+}
+
+// Log Users Activity query
+const processActivity = async () => {
+    const activity = await LogUserActivity.query()
+
+    const groupedActivity = _.groupBy(activity, (item : LogUserActivity) => {
+        return moment(item.createdAt).format('YYYY-MM-DD HH:00:00')
+    })
+
+    _.each(groupedActivity, async (items : Array<LogUserActivity>, date) => {
+        const onlinePlaying = _.uniq(
+            items.filter(item => item.game)
+                .map(item => item.id)
+        );
+
+        const justOnline = _.uniq(
+            items.filter(item => !item.game)
+                .map(item => item.id)
+        );
+
+        try {
+            const successInsert = await LogProcessedActivity
+                .query()
+                .insert(
+                    {
+                        online: justOnline.join(','),
+                        playing: onlinePlaying.join(','),
+                        online_at: date
+                    })
+
+            if (successInsert) {
+                await LogUserActivity
+                    .query()
+                    .delete()
+            }
+        } catch (e) {
+            console.log('Something went wrong when inserting processed log.', e.stack)
+        }
     });
 }
 
