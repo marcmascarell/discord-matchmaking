@@ -27,18 +27,18 @@ export default class PubCommand extends BaseCommand {
         const servers : any = [
             {
                 type: 'cod',
-                host: '37.59.49.193', // Mugs server
-                port: '21980',
-                recommended: true,
-                mods: false
-            },
-            {
-                type: 'cod',
                 host: '83.98.193.34', // NL Cracked server
                 port: '28965',
                 recommended: false,
                 mods: true
             },
+            {
+                type: 'cod',
+                host: '37.59.49.193', // Mugs server
+                port: '21980',
+                recommended: true,
+                mods: false
+            }
         ]
 
         await servers.forEach(async server => {
