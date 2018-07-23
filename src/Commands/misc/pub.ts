@@ -41,7 +41,7 @@ export default class PubCommand extends BaseCommand {
             },
         ]
 
-        servers.forEach(async server => {
+        await servers.forEach(async server => {
             let gameState
             let footer = ''
 
