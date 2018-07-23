@@ -1,5 +1,4 @@
 import {CommandMessage, CommandoClient} from "discord.js-commando"
-
 import BaseCommand from '../BaseCommand'
 import MapType from "../../Types/MapArgumentType"
 import utils from "../../Utilities/utils"
@@ -12,7 +11,7 @@ export default class PubCommand extends BaseCommand {
         super(client, {
             name: 'pub',
             memberName: 'pub',
-            description: 'Public servers status.',
+            description: 'Recommended public server status.',
             group: 'misc',
             aliases: [
                 'pubs',
@@ -24,79 +23,45 @@ export default class PubCommand extends BaseCommand {
 
     async run(message : CommandMessage) {
         const channel = message.channel
-        const servers : any = [
-            {
+        let gameState
+
+        try {
+            gameState = await Gamedig.query({
                 type: 'cod',
                 host: '37.59.49.193', // Mugs server
-                port: '21980',
-                recommended: true,
-                mods: false
-            },
-            {
-                type: 'cod',
-                host: '83.98.193.34', // NL Cracked server
-                port: '28965',
-                recommended: false,
-                mods: true
-            },
-        ]
+                port: '21980'
+            })
+        } catch (e) {
+            return message.reply(`Couldn't fetch server info :(`);
+        }
 
-        servers.forEach(async server => {
-            let gameState
-            let footer = ''
+        const playersSortedByFrags = _.sortBy(gameState.players, 'frags').reverse()
 
-            try {
-                gameState = await Gamedig.query({
-                    type: server.type,
-                    host: server.host, // Mugs server
-                    port: server.port
-                })
-            } catch (e) {
-                return
-            }
+        const mapImage = MapType.getMapImage(gameState.map)
 
-            const playersSortedByFrags = _.sortBy(gameState.players, 'frags').reverse()
+        let embed = new Discord.RichEmbed()
+            .setTitle(`${utils.prettifyMapName(gameState.map)} (${gameState.players.length}/${gameState.maxplayers}) - ${gameState.name}`,)
+            .setFooter(`Recommended TDM Public server`)
+            .setColor('#9B59B6');
 
-            const mapImage = MapType.getMapImage(gameState.map)
-
-            let embed = new Discord.RichEmbed()
-                .setTitle(`${utils.prettifyMapName(gameState.map)} (${gameState.players.length}/${gameState.maxplayers}) - ${gameState.name}`,)
-                .setColor('#9B59B6');
-
-            if (server.recommended) {
-                footer = 'Recommended public server'
-            }
-
-            if (server.mods) {
-                footer += server.mods ? ` * Modded` : ''
-            }
-
-            if (footer !== '') {
-                embed.setFooter(footer.trim())
-            }
-
-            if (playersSortedByFrags.length) {
-                embed.addField(
-                    'Players',
-                    _.map(playersSortedByFrags, (player) => {
-                        return `${player.name.trim()} *(${player.frags})*`
-                    }).join("\n")
-                )
-            }
-
+        if (playersSortedByFrags.length) {
             embed.addField(
-                'Address',
-                '`/connect ' + `${gameState.query.host}:${gameState.query.port}` + '`'
+                'Players',
+                _.map(playersSortedByFrags, (player) => {
+                    return `${player.name.trim()} *(${player.frags})*`
+                }).join("\n")
             )
+        }
 
-            if (mapImage) {
-                embed.setThumbnail(mapImage)
-            }
+        embed.addField(
+            'Address',
+            '`/connect ' + `${gameState.query.host}:${gameState.query.port}` + '`'
+        )
 
-            channel.send(embed)
-        })
+        if (mapImage) {
+            embed.setThumbnail(mapImage)
+        }
 
-        return message.say('Public servers:')
+        channel.send(embed)
     }
-
 };

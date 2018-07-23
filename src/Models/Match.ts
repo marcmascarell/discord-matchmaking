@@ -136,11 +136,11 @@ export default class Match extends Model {
             console.log('No players given... did you load the relation?')
             return []
         }
-        console.log(this.players)
+
         return this.players.map(player => player.username);
     }
 
-    playerIds() : number[] {
+    playerIds() : string[] {
         if (!this.players) {
             console.log('No players given... did you load the relation?')
             return []
@@ -202,10 +202,10 @@ export default class Match extends Model {
                 return User
                     .query()
                     .upsertGraph({
-                        discord_id: player.id,
-                        discord_username: player.username,
-                        discord_discriminator: player.discriminator,
-                        discord_avatar: player.avatar
+                        id: player.id,
+                        username: player.username,
+                        discriminator: player.discriminator,
+                        avatar: player.avatar
                     }, {
                         insertMissing: true,
                         noDelete: true
@@ -264,10 +264,10 @@ export default class Match extends Model {
         return User
             .query()
             .upsertGraph({
-                discord_id: createdBy.id,
-                discord_username: createdBy.username,
-                discord_discriminator: createdBy.discriminator,
-                discord_avatar: createdBy.avatar
+                id: createdBy.id,
+                username: createdBy.username,
+                discriminator: createdBy.discriminator,
+                avatar: createdBy.avatar
             }, {
                 insertMissing: true,
                 noDelete: true
