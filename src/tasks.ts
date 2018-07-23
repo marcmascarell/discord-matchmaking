@@ -6,6 +6,7 @@ import utils from "./Utilities/utils"
 const Gamedig = require('gamedig');
 import LogUserActivity from './Models/LogUserActivity'
 import LogProcessedActivity from "./Models/LogProcessedActivity";
+import User from "./Models/User";
 const moment = require('moment');
 const _ = require('lodash');
 
@@ -14,6 +15,7 @@ const _ = require('lodash');
  */
 const init = () => {
     const oneMinute = 60000
+    const fiveSeconds = 5000
     const threeMinutes = 180000
     const oneDay = 86400000
 
@@ -120,12 +122,32 @@ const logUsersActivity = async () => {
         return user.bot === false && user.presence.status !== 'offline'
     });
 
+    const onlineUserIds = onlineUsers.map(onlineUser => onlineUser.id)
+    const users = await User
+        .query()
+        .whereIn('discord_id', onlineUserIds)
+
     onlineUsers.forEach(async user => {
+        const foundUser = users.find(item => item.discordId === user.id)
+
+        const currentUser = await User
+            .query()
+            .upsertGraph({
+                id: foundUser ? foundUser.id : null,
+                discord_id: user.id,
+                discord_username: user.username,
+                discord_discriminator: user.discriminator,
+                discord_avatar: user.avatar
+            }, {
+                insertMissing: true,
+                noDelete: true
+            })
+
         await LogUserActivity
             .query()
             .insert(
                 {
-                    id: user.id,
+                    id: currentUser.id,
                     game: user.presence.game ? user.presence.game.name : null,
                     username: user.username,
                     created_at: moment().format('YYYY-MM-DD HH:mm:ss')
