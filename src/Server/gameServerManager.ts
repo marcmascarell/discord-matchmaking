@@ -16,6 +16,8 @@ const serverLimit = 3
 
 const isLimitReached = () => {
     return new Promise((resolve, reject) => {
+        // Todo: remove when this is solved (https://github.com/pjpimentel/dots/issues/17)
+        return resolve(false)
         digitalOcean.Droplet.list(getServerTag(), 0, 5).subscribe((response : any) => {
             if (response.total >= serverLimit) {
                 return resolve(true)
@@ -104,7 +106,7 @@ const create = (
                     throw new Error('Failed to create server')
                 }
             }, (err : Error) => {
-                console.log(err)
+                console.log('Digital Ocean Error', err)
                 reject(err)
             });
         })
