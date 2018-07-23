@@ -17,7 +17,7 @@ export default class SendServerInfoToPlayers extends Listener {
             return
         }
 
-        const playersIds : string[] = match.playerIds()
+        const playersIds : number[] = match.playerIds()
 
         const players = bot.getClient()
             .guilds
