@@ -1,5 +1,7 @@
 import gameServerManager from './Server/gameServerManager'
 import secrets from "./secrets"
+import database from "./database";
+import LogProcessedActivity from "./Models/LogProcessedActivity";
 
 const express = require('express')
 const app = express()
@@ -29,6 +31,22 @@ app.post('/api/server/create', function (req, res) {
     res.send({
         creating: name,
         result: 'ok'
+    })
+});
+
+app.get('/api/users/activity', async function (req, res) {
+    const token = req.query.token
+
+    if (token !== secrets.apiToken) {
+        res.send('Invalid token!')
+
+        return;
+    }
+    database.init()
+    const actData = await LogProcessedActivity.query();
+    console.log(actData)
+    res.send({
+        result: actData
     })
 });
 

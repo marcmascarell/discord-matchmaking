@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js" integrity="sha256-CfcERD4Ov4+lKbWbYqXD6aFM9M51gN4GUEtDhkWABMo=" crossorigin="anonymous"></script>
+</head>
+<body>
+<div style=" max-width:400px; max-height: 100px;">
+    <canvas id="densityChart" width="600" height="400"></canvas>
+
+</div>
+<script>
+    // var total = [];
+    // var online = [9,9,3,4,4,5,6,4,4,2,4,8];
+    // var playing = [3,1,5,6,7,8,9,2,4,3,5,2];
+    // for (i = 0; i < online.length; i++) {
+    //     var totalH = online[i] + playing[i];
+    //     total.push(totalH);
+    // }
+
+    // var myChart = new Chart(dilluns, {
+    //     type: 'bar',
+    //     data: {
+    //         labels: ["12H", "13h", "14h", "15h", "16h", "17h", "18h", "19h", "20h", "21h", "22h", "23h" ,"24h" ],
+    //         datasets: [{
+    //             label: '# of Votes',
+    //             data: [total, online, playing],
+    //             backgroundColor: [
+    //                 'rgba(255, 99, 132, 0.2)',
+    //                 'rgba(54, 162, 235, 0.2)',
+    //                 'rgba(255, 206, 86, 0.2)',
+    //                 'rgba(255, 99, 132, 0.2)',
+    //                 'rgba(54, 162, 235, 0.2)',
+    //                 'rgba(255, 206, 86, 0.2)'
+    //             ],
+    //             // borderColor: [
+    //             //     'rgba(255,99,132,1)',
+    //             //     'rgba(54, 162, 235, 1)',
+    //             //     'rgba(255, 206, 86, 1)',
+    //             //     'rgba(255,99,132,1)',
+    //             //     'rgba(54, 162, 235, 1)',
+    //             //     'rgba(255, 206, 86, 1)'
+    //             // ],
+    //             borderWidth: 1
+    //         }]
+    //     },
+    //     options: {
+    //         scales: {
+    //             xAxes: [{
+    //                 barPercentage: 1,
+    //                 categoryPercentage: 0.6
+    //             }],
+    //             yAxes: [{
+    //                 ticks: {
+    //                     beginAtZero:true
+    //                 }
+    //             }]
+    //         }
+    //     }
+    // });
+    var densityCanvas = document.getElementById("densityChart");
+
+    Chart.defaults.global.defaultFontFamily = "Lato";
+    Chart.defaults.global.defaultFontSize = 18;
+
+    var onlinePlayers = {
+        label: 'Total Number of players',
+        data: [9,9,3,4,4,5,6,4,4,2,4,8,5],
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderWidth: 0,
+    };
+
+    var playingPlayers = {
+        label: 'Players that were playing',
+        // data: [9,9,3,4,4,5,6,4,4,2,4,8,5],
+
+        data: [3,1,5,6,7,8,9,2,4,3,5,2,5],
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        borderWidth: 0
+    };
+
+    var hores = {
+        labels: ["12h", "13h", "14h", "15h", "16h", "17h", "18h", "19h" , "20h" , "21h" , "22h" , "23h", "24h"],
+        datasets: [onlinePlayers, playingPlayers]
+    };
+    var chartOptions = {
+        scales: {
+            xAxes: [{
+                barPercentage: 1,
+                categoryPercentage: 0.6
+            }],
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+
+            }]
+        }
+    };
+
+    var barChart = new Chart(densityCanvas, {
+        type: 'bar',
+        data: hores,
+        options: chartOptions
+    });
+</script>
+</body>
+</html>
