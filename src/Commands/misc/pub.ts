@@ -54,7 +54,7 @@ export default class PubCommand extends BaseCommand {
                     let gameState
                     let footer = ''
 
-                    setTimeout(() => {
+                    setTimeout(async () => {
                         try {
                             gameState = await Gamedig.query({
                                 type: server.type,
