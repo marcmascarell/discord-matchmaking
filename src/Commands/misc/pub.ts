@@ -41,62 +41,70 @@ export default class PubCommand extends BaseCommand {
             }
         ]
 
-        await servers.forEach(async server => {
-            let gameState
-            let footer = ''
+        message.say('Public servers:')
 
-            try {
-                gameState = await Gamedig.query({
-                    type: server.type,
-                    host: server.host, // Mugs server
-                    port: server.port
+        try {
+            await utils.forEachPromise(servers, server => {
+                return new Promise(async (resolve, reject) => {
+                    let gameState
+                    let footer = ''
+
+                    try {
+                        gameState = await Gamedig.query({
+                            type: server.type,
+                            host: server.host, // Mugs server
+                            port: server.port
+                        })
+                    } catch (e) {
+                        return reject('Unable to fetch server info')
+                    }
+
+                    const playersSortedByFrags = _.sortBy(gameState.players, 'frags').reverse()
+
+                    const mapImage = MapType.getMapImage(gameState.map)
+
+                    let embed = new Discord.RichEmbed()
+                        .setTitle(`${utils.prettifyMapName(gameState.map)} (${gameState.players.length}/${gameState.maxplayers}) - ${gameState.name}`,)
+                        .setColor('#9B59B6');
+
+                    if (server.recommended) {
+                        footer = 'Recommended public server'
+                    }
+
+                    if (server.mods) {
+                        footer += server.mods ? ` * Modded` : ''
+                    }
+
+                    if (footer !== '') {
+                        embed.setFooter(footer.trim())
+                    }
+
+                    if (playersSortedByFrags.length) {
+                        embed.addField(
+                            'Players',
+                            _.map(playersSortedByFrags, (player) => {
+                                return `${player.name.trim()} *(${player.frags})*`
+                            }).join("\n")
+                        )
+                    }
+
+                    embed.addField(
+                        'Address',
+                        '`/connect ' + `${gameState.query.host}:${gameState.query.port}` + '`'
+                    )
+
+                    if (mapImage) {
+                        embed.setThumbnail(mapImage)
+                    }
+
+                    channel.send(embed).then(resolve)
                 })
-            } catch (e) {
-                return
-            }
+            })
+        } catch (e) {
+            console.log('Error fetching server info', e.message)
+        }
 
-            const playersSortedByFrags = _.sortBy(gameState.players, 'frags').reverse()
-
-            const mapImage = MapType.getMapImage(gameState.map)
-
-            let embed = new Discord.RichEmbed()
-                .setTitle(`${utils.prettifyMapName(gameState.map)} (${gameState.players.length}/${gameState.maxplayers}) - ${gameState.name}`,)
-                .setColor('#9B59B6');
-
-            if (server.recommended) {
-                footer = 'Recommended public server'
-            }
-
-            if (server.mods) {
-                footer += server.mods ? ` * Modded` : ''
-            }
-
-            if (footer !== '') {
-                embed.setFooter(footer.trim())
-            }
-
-            if (playersSortedByFrags.length) {
-                embed.addField(
-                    'Players',
-                    _.map(playersSortedByFrags, (player) => {
-                        return `${player.name.trim()} *(${player.frags})*`
-                    }).join("\n")
-                )
-            }
-
-            embed.addField(
-                'Address',
-                '`/connect ' + `${gameState.query.host}:${gameState.query.port}` + '`'
-            )
-
-            if (mapImage) {
-                embed.setThumbnail(mapImage)
-            }
-
-            channel.send(embed)
-        })
-
-        return message.say('Public servers:')
+        return Promise.resolve(null)
     }
 
 };

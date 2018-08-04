@@ -29,6 +29,16 @@ const isGuildOnlyDev = (guild : GuildResolvable) => {
     return includes(secrets.guilds.development, id)
 }
 
+const forEachPromise = (collection, promise) => {
+    const promises = []
+
+    _.each(collection, (value, key) => {
+        promises.push(promise(value, key))
+    })
+
+    return Promise.all(promises)
+}
+
 /**
  *
  * @param {boolean} onlyStartedRecently
@@ -104,5 +114,6 @@ export default {
     isProduction,
     includes,
     prettifyMapName,
-    getStreams
+    getStreams,
+    forEachPromise
 }
