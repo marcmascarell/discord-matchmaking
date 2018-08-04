@@ -54,56 +54,58 @@ export default class PubCommand extends BaseCommand {
                     let gameState
                     let footer = ''
 
-                    try {
-                        gameState = await Gamedig.query({
-                            type: server.type,
-                            host: server.host, // Mugs server
-                            port: server.port
-                        })
-                    } catch (e) {
-                        console.log('Server failed', server, e.message)
-                        return reject('Unable to fetch server info')
-                    }
+                    setTimeout(() => {
+                        try {
+                            gameState = await Gamedig.query({
+                                type: server.type,
+                                host: server.host, // Mugs server
+                                port: server.port
+                            })
+                        } catch (e) {
+                            console.log('Server failed', server, e.message)
+                            return reject('Unable to fetch server info')
+                        }
 
-                    const playersSortedByFrags = _.sortBy(gameState.players, 'frags').reverse()
+                        const playersSortedByFrags = _.sortBy(gameState.players, 'frags').reverse()
 
-                    const mapImage = MapType.getMapImage(gameState.map)
+                        const mapImage = MapType.getMapImage(gameState.map)
 
-                    let embed = new Discord.RichEmbed()
-                        .setTitle(`${utils.prettifyMapName(gameState.map)} (${gameState.players.length}/${gameState.maxplayers}) - ${gameState.name}`,)
-                        .setColor('#9B59B6');
+                        let embed = new Discord.RichEmbed()
+                            .setTitle(`${utils.prettifyMapName(gameState.map)} (${gameState.players.length}/${gameState.maxplayers}) - ${gameState.name}`,)
+                            .setColor('#9B59B6');
 
-                    if (server.recommended) {
-                        footer = 'Recommended public server'
-                    }
+                        if (server.recommended) {
+                            footer = 'Recommended public server'
+                        }
 
-                    if (server.mods) {
-                        footer += server.mods ? ` * Modded` : ''
-                    }
+                        if (server.mods) {
+                            footer += server.mods ? ` * Modded` : ''
+                        }
 
-                    if (footer !== '') {
-                        embed.setFooter(footer.trim())
-                    }
+                        if (footer !== '') {
+                            embed.setFooter(footer.trim())
+                        }
 
-                    if (playersSortedByFrags.length) {
+                        if (playersSortedByFrags.length) {
+                            embed.addField(
+                                'Players',
+                                _.map(playersSortedByFrags, (player) => {
+                                    return `${player.name.trim()} *(${player.frags})*`
+                                }).join("\n")
+                            )
+                        }
+
                         embed.addField(
-                            'Players',
-                            _.map(playersSortedByFrags, (player) => {
-                                return `${player.name.trim()} *(${player.frags})*`
-                            }).join("\n")
+                            'Address',
+                            '`/connect ' + `${gameState.query.host}:${gameState.query.port}` + '`'
                         )
-                    }
 
-                    embed.addField(
-                        'Address',
-                        '`/connect ' + `${gameState.query.host}:${gameState.query.port}` + '`'
-                    )
+                        if (mapImage) {
+                            embed.setThumbnail(mapImage)
+                        }
 
-                    if (mapImage) {
-                        embed.setThumbnail(mapImage)
-                    }
-
-                    channel.send(embed).then(resolve)
+                        channel.send(embed).then(resolve)
+                    }, 200)
                 })
             })
         } catch (e) {
