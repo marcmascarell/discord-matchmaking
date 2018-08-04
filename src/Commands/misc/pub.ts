@@ -49,7 +49,7 @@ export default class PubCommand extends BaseCommand {
         // message.say('Public servers:')
 
         try {
-            await utils.forEachPromise(servers, server => {
+            const embeds = await utils.forEachPromise(servers, server => {
                 return new Promise(async (resolve, reject) => {
                     let gameState
                     let footer = ''
@@ -103,12 +103,18 @@ export default class PubCommand extends BaseCommand {
                         embed.setThumbnail(mapImage)
                     }
 
-                    channel.send(embed).then(resolve)
+                    resolve(embed)
                 })
             })
+
+            embeds.forEach(embed => {
+                channel.send(embed)
+            })
+
         } catch (e) {
             console.log('Error fetching server info', e.message)
         }
+
 
         return Promise.resolve(null)
     }
