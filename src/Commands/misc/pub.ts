@@ -3,6 +3,7 @@ import {CommandMessage, CommandoClient} from "discord.js-commando"
 import BaseCommand from '../BaseCommand'
 import MapType from "../../Types/MapArgumentType"
 import utils from "../../Utilities/utils"
+import {GuildResolvable} from "discord.js"
 const Gamedig = require('gamedig');
 const _ = require('lodash');
 const Discord = require('discord.js');
@@ -20,6 +21,10 @@ export default class PubCommand extends BaseCommand {
                 'publics',
             ]
         });
+    }
+
+    isEnabledIn(guild : GuildResolvable) {
+        return true
     }
 
     async run(message : CommandMessage) {
