@@ -44,6 +44,16 @@ bot.getClient().on('ready', async () => {
 ```
 (You can erase the code block when you are done with the invitation)
 
+Migrate & refresh
+----------
+```bassh
+knex migrate:rollback
+
+knex migrate:latest
+
+knex seed:run
+```
+
 Utilities
 ----------
 
