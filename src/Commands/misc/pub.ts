@@ -61,6 +61,7 @@ export default class PubCommand extends BaseCommand {
                             port: server.port
                         })
                     } catch (e) {
+                        console.log('Server failed', server)
                         return reject('Unable to fetch server info')
                     }
 
