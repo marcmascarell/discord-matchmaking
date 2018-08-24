@@ -63,6 +63,7 @@ Get latest server snapshot
 Get server passwords
 `node dist/Utilities/getPasswords.js {serverName}`
 
+
 [Migrations](http://knexjs.org/#Migrations)
 ----------
 Once you have finished writing the migrations, you can update the database matching your NODE_ENV by running:
@@ -85,6 +86,7 @@ knex migrate:rollback
 knex migrate:latest
 knex seed:run
 ```
+
 
 License
 ----------
