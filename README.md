@@ -63,15 +63,6 @@ Get latest server snapshot
 Get server passwords
 `node dist/Utilities/getPasswords.js {serverName}`
 
-Caveats
-----------
-Solving "error TS2339: Property 'applyFilter' does not exist on type" objection.js error:
-
-Change the typings from node_modules with this:
-https://github.com/Vincit/objection.js/blob/master/typings/objection/index.d.ts
-
-It is a temporal solution until they release a new version which will include the fix.
-
 [Migrations](http://knexjs.org/#Migrations)
 ----------
 Once you have finished writing the migrations, you can update the database matching your NODE_ENV by running:
@@ -89,7 +80,11 @@ To rollback the last batch of migrations:
 `knex seed:run`
 
 Refresh:
-`knex migrate:rollback && knex migrate:latest && knex seed:run`
+```
+knex migrate:rollback
+knex migrate:latest
+knex seed:run
+```
 
 License
 ----------
