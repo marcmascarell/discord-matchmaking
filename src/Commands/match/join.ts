@@ -1,9 +1,9 @@
 import {CommandMessage, CommandoClient} from "discord.js-commando"
 import Match from "../../Models/Match"
 import MatchReady from "../../Events/MatchReady"
-import BaseCommand from '../BaseCommand'
+import GuildCommand from '../GuildCommand'
 
-export default class JoinCommand extends BaseCommand {
+export default class JoinCommand extends GuildCommand {
     constructor(client : CommandoClient) {
         super(client, {
             name: 'join',

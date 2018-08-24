@@ -12,7 +12,7 @@ export default class JoinCommand extends BaseCommand {
         super(client, {
             name: 'admin',
             memberName: 'admin',
-            description: 'Admin match info.',
+            description: 'Admin match info. (Only available for admins)',
             group: 'match',
 
             args: [

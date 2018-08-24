@@ -2,9 +2,9 @@ import {CommandMessage, CommandoClient} from "discord.js-commando"
 import Match from "../../Models/Match"
 
 import MapType from '../../Types/MapArgumentType'
-import BaseCommand from '../BaseCommand'
+import GuildCommand from '../GuildCommand'
 
-export default class MatchCommand extends BaseCommand {
+export default class MatchCommand extends GuildCommand {
     constructor(client : CommandoClient) {
         super(client, {
             name: 'match',
