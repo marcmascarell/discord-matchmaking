@@ -4,8 +4,12 @@ import LogUserActivity from './Models/LogUserActivity'
 import bot from './bot'
 import NotifyStreams from "./Listeners/NotifyStreams"
 import utils from "./Utilities/utils"
+import ServerStatusCard from "./Embeds/ServerStatusCard"
+import secrets from "./secrets"
 const moment = require('moment');
 const Gamedig = require('gamedig');
+
+let lastPublicServersNotification
 
 /**
  * Tasks to perform. Checked every minute
@@ -13,25 +17,57 @@ const Gamedig = require('gamedig');
 const init = () => {
     const oneMinute = 60000
     const threeMinutes = 180000
+    const fifteenMinutes = 900000
 
-    setInterval(() => {
+    setInterval(async () => {
         // console.log('Tasks running...')
         lookForDestroyableServers()
         cancelNonStartedInactiveMatches()
-
     }, oneMinute)
 
     setInterval(async () => {
         logUsersActivity()
         lookForNewStreams()
     }, threeMinutes)
+
+    setInterval(async () => {
+        monitorPublicServers()
+    }, fifteenMinutes)
+}
+
+const monitorPublicServers = async () => {
+    const channel = await bot.getChannel('COD1 Community', 'general')
+
+    if (! channel) return
+
+    const serversStatus = await utils.fetchServersStatus(secrets.publicServers)
+
+    const embeds = []
+
+    serversStatus
+        .filter(serverStatus => serverStatus.players.length >= 14)
+        .forEach(gameState => {
+            embeds.push(new ServerStatusCard(gameState).render())
+        })
+
+    if (
+        embeds.length &&
+            !lastPublicServersNotification ||
+            moment().diff(lastPublicServersNotification, 'hour') > 1
+    ) {
+        embeds.forEach(embed => {
+            channel.send(embed)
+        })
+
+        lastPublicServersNotification = moment()
+    }
 }
 
 const lookForNewStreams = async () => {
     try {
         const streams : any = await utils.getStreams(true)
 
-        if (streams.length === 0) return
+        if (!streams || streams.length === 0) return
 
         const channel = await bot.getChannel('COD1 Community', 'general')
 

@@ -2,7 +2,7 @@ const Commando = require('discord.js-commando');
 const path = require('path');
 import secrets from './secrets'
 import utils from './Utilities/utils'
-import {Guild} from "discord.js"
+import {Guild, GuildChannel, TextChannel} from "discord.js"
 
 let botReady = false
 
@@ -57,7 +57,7 @@ const init = () => {
     client.login(secrets.discordToken);
 }
 
-const getChannel = async (guildName, channelName) => {
+const getChannel = async (guildName, channelName) : Promise<TextChannel|GuildChannel|any> => {
     const guild : Guild = await getClient().guilds.find(guild => guild.name === guildName)
 
     if (!guild) return null

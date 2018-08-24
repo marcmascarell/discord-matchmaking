@@ -4,6 +4,7 @@ import moment from 'moment'
 import request from 'request'
 import _ from 'lodash'
 import crypto from 'crypto'
+const Gamedig = require('gamedig');
 
 const getRconForServer = (serverName : string) => {
     return crypto.createHash('md5').update(serverName + secrets.rconSalt).digest("hex")
@@ -21,6 +22,39 @@ const prettifyMapName = (name) => {
     return _.startCase(
         name.replace('mp_', '').replace('_', '')
     )
+}
+
+const fetchServersStatus = async (servers : Array<{
+        type: string,
+        host: string, // NL Cracked server
+        port: string,
+        customFields: {
+            recommended: boolean,
+            mods: boolean
+        }
+    }>
+) => {
+    const serversStatus = await forEachPromise(servers, server => {
+        return new Promise(async (resolve) => {
+            let gameState
+
+            try {
+                gameState = await Gamedig.query({
+                    type: server.type,
+                    host: server.host,
+                    port: server.port
+                })
+            } catch (e) {
+                console.log('Server fetch failed', server, e.message)
+
+                return resolve(null)
+            }
+
+            resolve(Object.assign({}, server, gameState))
+        })
+    })
+
+    return serversStatus.filter(serverStatus => serverStatus !== null)
 }
 
 const isGuildOnlyDev = (guild : GuildResolvable) => {
@@ -115,5 +149,5 @@ export default {
     includes,
     prettifyMapName,
     getStreams,
-    forEachPromise
+    fetchServersStatus
 }

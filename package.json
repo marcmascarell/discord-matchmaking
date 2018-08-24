@@ -19,7 +19,7 @@
     "@types/node": "^10.1.2",
     "discord.js": "^11.3.2",
     "discord.js-commando": "^0.10.0",
-    "dots-wrapper": "^2.1.0",
+    "dots-wrapper": "^2.1.13-0",
     "express": "^4.16.3",
     "firebase-admin": "^5.12.1",
     "gamedig": "^1.0.46",
