@@ -49,8 +49,9 @@ const init = () => {
 
             // Do nothing if the channel wasn't found on this server
             if (!channel) return;
+
             // Send the message, mentioning the member
-            channel.send(`Welcome ${member}! Use \`!help\`.`);
+            channel.send(`Welcome ${member} to the COD1 Community! Stay tunned for future events. Use \`!help\` to see what can I do for you.`);
         });
     })
 

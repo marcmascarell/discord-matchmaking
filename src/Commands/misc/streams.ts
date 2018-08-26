@@ -22,7 +22,7 @@ export default class StreamsCommand extends BaseCommand {
         const streams : any = await utils.getStreams()
         const channel = message.channel
 
-        if (streams.length === 0) {
+        if (!streams || streams.length === 0) {
             return message.reply('There are no streams right now.')
         }
 
