@@ -1,7 +1,6 @@
 import {CommandMessage, CommandoClient} from "discord.js-commando"
 const Discord = require("discord.js")
 
-import _ from 'lodash'
 import secrets from '../../secrets'
 import utils from '../../Utilities/utils'
 import Match from '../../Models/Match'

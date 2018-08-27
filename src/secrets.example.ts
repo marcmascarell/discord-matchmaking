@@ -7,6 +7,7 @@ const secrets = {
     jsonStore: '',
     discordAdmins: [],
     discordModerators: [],
+    publicServers: [],
 
     // The production bot should answer or not
     guilds: {

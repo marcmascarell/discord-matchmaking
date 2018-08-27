@@ -2,15 +2,16 @@ import {CommandMessage, CommandoClient} from "discord.js-commando"
 import Match from "../../Models/Match"
 import ListPendingMatches from "../../Listeners/ListPendingMatches"
 import {DMChannel, GroupDMChannel, TextChannel} from "discord.js"
-import GuildCommand from '../GuildCommand'
+import BaseCommand from "../BaseCommand";
 
-export default class ListCommand extends GuildCommand {
+export default class ListCommand extends BaseCommand {
     constructor(client : CommandoClient) {
         super(client, {
             name: 'list',
             memberName: 'list',
             description: 'List of current matches.',
             group: 'match',
+            guildOnly: true,
             aliases: ['matches'],
             args: [
                 {

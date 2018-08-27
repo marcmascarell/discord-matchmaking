@@ -1,15 +1,16 @@
 import {CommandMessage, CommandoClient} from "discord.js-commando"
 import Match from "../../Models/Match"
 import MatchReady from "../../Events/MatchReady"
-import GuildCommand from '../GuildCommand'
+import BaseCommand from "../BaseCommand";
 
-export default class JoinCommand extends GuildCommand {
+export default class JoinCommand extends BaseCommand {
     constructor(client : CommandoClient) {
         super(client, {
             name: 'join',
             memberName: 'join',
             description: 'Join match.',
             group: 'match',
+            guildOnly: true,
 
             args: [
                 {

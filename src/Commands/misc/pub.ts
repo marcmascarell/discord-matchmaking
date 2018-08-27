@@ -24,10 +24,6 @@ export default class PubCommand extends BaseCommand {
         });
     }
 
-    isEnabledIn(guild : GuildResolvable) {
-        return true
-    }
-
     async run(message : CommandMessage) {
         const channel = message.channel
 

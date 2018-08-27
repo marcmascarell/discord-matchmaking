@@ -17,8 +17,11 @@ const isReady = () => botReady
 
 const init = () => {
     client.on('ready', async () => {
+        console.log('BOT is ready.')
         botReady = true
 
+        client.user.setActivity('!help', { type: 'LISTENING' })
+        
         client.registry
             .registerDefaultTypes()
             .registerDefaultGroups()
