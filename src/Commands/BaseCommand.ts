@@ -7,12 +7,7 @@ export default abstract class BaseCommand extends Command {
 
     // Will disable production bot commands while we are developing
     isEnabledIn(guild : GuildResolvable) {
-        const isGuildOnlyDev = utils.isGuildOnlyDev(guild)
-
-        return (
-            utils.isDevelopment() && isGuildOnlyDev ||
-            utils.isProduction() && ! isGuildOnlyDev
-        )
+        return !(utils.isDevelopmentGuild(guild) && utils.isProduction())
     }
 
 };

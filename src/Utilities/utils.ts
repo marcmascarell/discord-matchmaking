@@ -57,7 +57,7 @@ const fetchServersStatus = async (servers : Array<{
     return serversStatus.filter(serverStatus => serverStatus !== null)
 }
 
-const isGuildOnlyDev = (guild : GuildResolvable) => {
+const isDevelopmentGuild = (guild : GuildResolvable) => {
     const id = guild instanceof Guild ? guild.id : guild
 
     return includes(secrets.guilds.development, id)
@@ -143,7 +143,7 @@ export default {
     getPasswordForServer,
     getServerNameForMatch,
     getEnvironment,
-    isGuildOnlyDev,
+    isDevelopmentGuild,
     isDevelopment,
     isProduction,
     includes,
