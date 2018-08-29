@@ -54,7 +54,7 @@ const init = () => {
             if (!channel) return;
 
             // Send the message, mentioning the member
-            channel.send(`Welcome **${member}** to the **COD1 Community**! Stay tunned for future events.\n_Use \`!help\` to see what can I do for you._`, {
+            channel.send(`Welcome **${member}** to the **COD1 Community**! Stay tuned for future events.\n_Use \`!help\` to see what can I do for you._`, {
                 files: ['https://cdn.discordapp.com/attachments/438725577831219210/484395447939629086/make-cod-great-again.jpg']
             });
         });
