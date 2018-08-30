@@ -1,4 +1,5 @@
 const secrets = {
+    logCommands: true,
     passwordSalt: '',
     rconSalt: '',
     discordOwner: '',

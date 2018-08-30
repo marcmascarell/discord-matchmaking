@@ -1,3 +1,5 @@
+import LogCommand from "./Models/LogCommand"
+
 const Commando = require('discord.js-commando');
 const path = require('path');
 import secrets from './secrets'
@@ -16,6 +18,19 @@ const getClient = () => client
 const isReady = () => botReady
 
 const init = () => {
+    if (secrets.logCommands) {
+        client.on('commandRun', async (command, promise, message, args) => {
+            await LogCommand
+                .query()
+                .insert({
+                    command: `${command.groupID}:${command.name} ${args.command || ''}`,
+                    discord_username: message.message.author.username,
+                    discord_user_id: message.message.author.id,
+                    discord_guild: message.message.channel.type === 'dm' ? 'DM' : message.message.channel.guild.id
+                });
+        })
+    }
+
     client.on('ready', async () => {
         console.log('BOT is ready.')
         botReady = true
