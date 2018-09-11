@@ -1,3 +1,5 @@
+import DeletedMatchDueToScheduledMatchNotFilled from "../Events/DeletedMatchDueToScheduledMatchNotFilled"
+
 const _ = require('lodash');
 const moment = require('moment');
 
@@ -24,6 +26,8 @@ export default class Match extends Model {
     public canceled_reason : string
     public server: Server
     public deleted_at : string
+    public scheduledAt : string
+    public scheduled_at : string
     public last_activity_at : string
 
     static get tableName() {
@@ -32,7 +36,8 @@ export default class Match extends Model {
 
     static get virtualAttributes() {
         return [
-            'isReady',
+            'isFull',
+            'isScheduled',
             'isWaitingForPlayers',
             'mapNames',
             'playersPerTeam',
@@ -55,12 +60,17 @@ export default class Match extends Model {
     static get REMOVAL_REASONS() {
         return {
             INACTIVITY: 'INACTIVITY',
+            SCHEDULED_MATCH_NOT_FULLFILLED: 'SCHEDULED_MATCH_NOT_FULLFILLED',
             DESERTION: 'DESERTION',
             ENDED: 'ENDED',
         }
     }
 
-    isReady() {
+    isScheduled() {
+        return !! this.scheduledAt;
+    }
+
+    isFull() {
         if (!this.players) {
             console.log('No players given... did you load the relation?')
             return false
@@ -91,6 +101,10 @@ export default class Match extends Model {
 
         if (reason === Match.REMOVAL_REASONS.ENDED) {
             new DeletedMatchDueToMatchEnding(this)
+        }
+
+        if (reason === Match.REMOVAL_REASONS.SCHEDULED_MATCH_NOT_FULLFILLED) {
+            new DeletedMatchDueToScheduledMatchNotFilled(this)
         }
 
         return Match
@@ -256,7 +270,8 @@ export default class Match extends Model {
             creator_id: createdBy.id,
             last_activity_at: moment().format('YYYY-MM-DD HH:mm:ss'),
             guild_id: match.channel.guild.id,
-            channel_id: match.channel.id
+            channel_id: match.channel.id,
+            scheduled_at: match.scheduled_at ? match.scheduled_at.format('YYYY-MM-DD HH:mm:ss') : null,
         }
 
         const user = await User.upsertByDiscordId(createdBy.id, createdBy)

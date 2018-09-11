@@ -6,6 +6,7 @@ import _ from 'lodash'
 import crypto from 'crypto'
 const Gamedig = require('gamedig');
 
+
 const getRconForServer = (serverName : string) => {
     return crypto.createHash('md5').update(serverName + secrets.rconSalt).digest("hex")
 }
@@ -134,6 +135,11 @@ const includes = (collection, value) => {
     return found !== undefined
 }
 
+const getHumanSpecificFormattedDate = (date) => {
+    return moment(date)
+        .format('dddd, MMMM Do [of] YYYY [at] h:mm A') + ' (Central European Time)'
+}
+
 const getEnvironment = () => process.env.NODE_ENV
 const isDevelopment = () => process.env.NODE_ENV === 'development'
 const isProduction = () => process.env.NODE_ENV === 'production'
@@ -149,5 +155,6 @@ export default {
     includes,
     prettifyMapName,
     getStreams,
-    fetchServersStatus
+    fetchServersStatus,
+    getHumanSpecificFormattedDate
 }

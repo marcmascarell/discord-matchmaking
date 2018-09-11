@@ -2,6 +2,7 @@ import {CommandMessage, CommandoClient} from "discord.js-commando"
 import Match from "../../Models/Match"
 import MatchReady from "../../Events/MatchReady"
 import BaseCommand from "../BaseCommand";
+import utils from "../../Utilities/utils"
 
 export default class JoinCommand extends BaseCommand {
     constructor(client : CommandoClient) {
@@ -52,11 +53,15 @@ export default class JoinCommand extends BaseCommand {
             return message.reply(`Could not join match ${match.id}`);
         }
 
-        if (joinedMatch.isReady()) {
+        if (joinedMatch.isFull() && !joinedMatch.isScheduled()) {
             new MatchReady({
                 channel,
                 match: joinedMatch
             })
+        }
+
+        if (joinedMatch.isScheduled()) {
+            return message.reply(`Joined scheduled match ${match.id}. Remember, the match is scheduled for ${utils.getHumanSpecificFormattedDate(match.scheduledAt)}`);
         }
 
         return message.reply(`Joined match ${match.id}`);
