@@ -17,6 +17,7 @@
   "dependencies": {
     "@types/knex": "^0.14.15",
     "@types/node": "^10.5.2",
+    "cors": "^2.8.4",
     "discord.js": "^11.3.2",
     "discord.js-commando": "^0.10.0",
     "dots-wrapper": "^2.2.0",
