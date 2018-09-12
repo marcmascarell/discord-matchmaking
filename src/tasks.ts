@@ -1,45 +1,73 @@
 import Server from './Models/Server'
 import Match from './Models/Match'
+import LogUserActivity from './Models/LogUserActivity'
 import bot from './bot'
 import NotifyStreams from "./Listeners/NotifyStreams"
 import utils from "./Utilities/utils"
-const Gamedig = require('gamedig');
-import LogUserActivity from './Models/LogUserActivity'
-import LogProcessedActivity from "./Models/LogProcessedActivity";
-import User from "./Models/User";
+import ServerStatusCard from "./Embeds/ServerStatusCard"
+import secrets from "./secrets"
 const moment = require('moment');
-const _ = require('lodash');
+const Gamedig = require('gamedig');
+
+let lastPublicServersNotification
 
 /**
  * Tasks to perform. Checked every minute
  */
 const init = () => {
     const oneMinute = 60000
-    const fiveSeconds = 5000
     const threeMinutes = 180000
-    const oneDay = 86400000
+    const fifteenMinutes = 900000
 
-    setInterval(() => {
+    setInterval(async () => {
         // console.log('Tasks running...')
         lookForDestroyableServers()
         cancelNonStartedInactiveMatches()
     }, oneMinute)
 
-    setInterval(() => {
+    setInterval(async () => {
         logUsersActivity()
         lookForNewStreams()
     }, threeMinutes)
 
-    setInterval(() => {
-        processActivity()
-    }, oneDay)
+    setInterval(async () => {
+        monitorPublicServers()
+    }, fifteenMinutes)
+}
+
+const monitorPublicServers = async () => {
+    const channel = await bot.getChannel('COD1 Community', 'general')
+
+    if (! channel) return
+
+    const serversStatus = await utils.fetchServersStatus(secrets.publicServers)
+
+    const embeds = []
+
+    serversStatus
+        .filter(serverStatus => serverStatus.players.length >= 14)
+        .forEach(gameState => {
+            embeds.push(new ServerStatusCard(gameState).render())
+        })
+
+    if (
+        embeds.length &&
+            !lastPublicServersNotification ||
+            moment().diff(lastPublicServersNotification, 'hour') > 1
+    ) {
+        embeds.forEach(embed => {
+            channel.send(embed)
+        })
+
+        lastPublicServersNotification = moment()
+    }
 }
 
 const lookForNewStreams = async () => {
     try {
         const streams : any = await utils.getStreams(true)
 
-        if (streams.length === 0) return
+        if (!streams || streams.length === 0) return
 
         const channel = await bot.getChannel('COD1 Community', 'general')
 
@@ -122,76 +150,16 @@ const logUsersActivity = async () => {
         return user.bot === false && user.presence.status !== 'offline'
     });
 
-    const onlineUserIds = onlineUsers.map(onlineUser => onlineUser.id)
-    const users = await User
-        .query()
-        .whereIn('discord_id', onlineUserIds)
-
     onlineUsers.forEach(async user => {
-        const foundUser = users.find(item => item.discordId === user.id)
-
-        const currentUser = await User
-            .query()
-            .upsertGraph({
-                id: foundUser ? foundUser.id : null,
-                discord_id: user.id,
-                discord_username: user.username,
-                discord_discriminator: user.discriminator,
-                discord_avatar: user.avatar
-            }, {
-                insertMissing: true,
-                noDelete: true
-            })
-
         await LogUserActivity
             .query()
             .insert(
                 {
-                    id: currentUser.id,
+                    id: user.id,
                     game: user.presence.game ? user.presence.game.name : null,
                     username: user.username,
                     created_at: moment().format('YYYY-MM-DD HH:mm:ss')
                 })
-    });
-}
-
-// Log Users Activity query
-const processActivity = async () => {
-    const activity = await LogUserActivity.query()
-
-    const groupedActivity = _.groupBy(activity, (item : LogUserActivity) => {
-        return moment(item.createdAt).format('YYYY-MM-DD HH:00:00')
-    })
-
-    _.each(groupedActivity, async (items : Array<LogUserActivity>, date) => {
-        const onlinePlaying = _.uniq(
-            items.filter(item => item.game)
-                .map(item => item.id)
-        );
-
-        const justOnline = _.uniq(
-            items.filter(item => !item.game)
-                .map(item => item.id)
-        );
-
-        try {
-            const successInsert = await LogProcessedActivity
-                .query()
-                .insert(
-                    {
-                        online: justOnline.join(','),
-                        playing: onlinePlaying.join(','),
-                        online_at: date
-                    })
-
-            if (successInsert) {
-                await LogUserActivity
-                    .query()
-                    .delete()
-            }
-        } catch (e) {
-            console.log('Something went wrong when inserting processed log.', e.stack)
-        }
     });
 }
 

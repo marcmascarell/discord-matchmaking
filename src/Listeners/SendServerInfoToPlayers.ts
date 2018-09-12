@@ -17,14 +17,14 @@ export default class SendServerInfoToPlayers extends Listener {
             return
         }
 
-        const playersIds : number[] = match.playerIds()
+        const playerDiscordIds : string[] = match.playerDiscordIds()
 
         const players = bot.getClient()
             .guilds
             .find((guild : Guild) => guild.id === channel.guild.id)
             .members
             .filter((member : GuildMember) => {
-                return utils.includes(playersIds, member.user.id)
+                return utils.includes(playerDiscordIds, member.user.id)
             })
 
         const embed = new MatchCard(match).render()

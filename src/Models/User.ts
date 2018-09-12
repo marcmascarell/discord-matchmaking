@@ -16,11 +16,36 @@ export default class User extends Model {
         return ['username']
     }
 
-    get username() {
+    username() : string {
         return this.discordUsername
     }
 
     static get tableName() {
         return 'users';
+    }
+
+    static findByDiscordId(id : string) : any {
+        return User.query().findOne({
+            discord_id: id
+        })
+    }
+
+    static async upsertByDiscordId(id : string, user : {id: string, username: string, discriminator: string, avatar: string}) {
+        const foundUser = await User
+            .query()
+            .findOne({discord_id: user.id})
+
+        return await User
+            .query()
+            .upsertGraph({
+                id: foundUser ? foundUser.id : null,
+                discord_id: user.id,
+                discord_username: user.username,
+                discord_discriminator: user.discriminator,
+                discord_avatar: user.avatar
+            }, {
+                insertMissing: true,
+                noDelete: true
+            })
     }
 }

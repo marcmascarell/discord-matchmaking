@@ -2,7 +2,7 @@ import {CommandMessage, CommandoClient} from "discord.js-commando"
 import Match from "../../Models/Match"
 
 import MapType from '../../Types/MapArgumentType'
-import BaseCommand from '../BaseCommand'
+import BaseCommand from "../BaseCommand";
 
 export default class MatchCommand extends BaseCommand {
     constructor(client : CommandoClient) {
@@ -11,15 +11,8 @@ export default class MatchCommand extends BaseCommand {
             memberName: 'match',
             description: 'Start a match.',
             group: 'match',
+            guildOnly: true,
             aliases: ['mix'],
-            // args: [
-            //     {
-            //         key: 'dank',
-            //         label: 'dank',
-            //         prompt: 'Say dank.',
-            //         type: 'dank'
-            //     }
-            // ]
             args: [
                 {
                     key: 'players',
@@ -40,15 +33,6 @@ export default class MatchCommand extends BaseCommand {
     }
 
     async run(message : CommandMessage, { players, map } : { players : string, map : string}) {
-        // const regex = /(\d)(v|vs|\svs\s|\sv\s)\d/gm;
-        //
-        // const regexMatch = regex.exec(players)
-        //
-        // if (regexMatch === null) {
-        //     return message.reply(`Invalid syntax. Write it like this: 5v5 or 5vs5 (NvsN)`);
-        // }
-        // const playersPerTeam = parseInt(regexMatch[1], 10)
-
         // This works with 5, 5v5, 5vs5 formats
         const playersPerTeam = parseInt(players[0], 10)
 

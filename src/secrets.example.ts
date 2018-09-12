@@ -1,4 +1,5 @@
 const secrets = {
+    logCommands: true,
     passwordSalt: '',
     rconSalt: '',
     discordOwner: '',
@@ -7,6 +8,7 @@ const secrets = {
     jsonStore: '',
     discordAdmins: [],
     discordModerators: [],
+    publicServers: [],
 
     // The production bot should answer or not
     guilds: {

@@ -20,23 +20,23 @@
     "cors": "^2.8.4",
     "discord.js": "^11.3.2",
     "discord.js-commando": "^0.10.0",
-    "dots-wrapper": "^2.2.0",
+    "dots-wrapper": "^2.1.13-0",
     "express": "^4.16.3",
     "firebase-admin": "^5.12.1",
     "gamedig": "^1.0.46",
     "knex": "^0.14.6",
     "lodash": "^4.17.10",
-    "moment": "^2.22.2",
-    "objection": "^1.1.10",
-    "request": "^2.87.0",
-    "sqlite3": "^4.0.1"
+    "moment": "^2.22.1",
+    "objection": "^1.1.9",
+    "request": "^2.86.0",
+    "sqlite3": "^4.0.2"
   },
   "devDependencies": {
     "@types/es6-promise": "^3.3.0",
-    "@types/lodash": "^4.14.110",
-    "cross-env": "^5.2.0",
-    "shipit-cli": "^4.1.1",
-    "shipit-deploy": "^4.1.1",
-    "typescript": "^2.9.2"
+    "@types/lodash": "^4.14.109",
+    "cross-env": "^5.1.5",
+    "shipit-cli": "^4.1.0",
+    "shipit-deploy": "^4.1.0",
+    "typescript": "^2.8.3"
   }
 }
