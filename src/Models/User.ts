@@ -30,7 +30,7 @@ export default class User extends Model {
         })
     }
 
-    static async upsertByDiscordId(id : string, user : {id: string, username: string, discriminator: string, avatar: string}) {
+    static async upsertByDiscordId(id : string, user : {id: string, username: string, discriminator: string, avatar: string}) : Promise<User> {
         const foundUser = await User
             .query()
             .findOne({discord_id: user.id})
