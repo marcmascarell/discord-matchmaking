@@ -69,7 +69,7 @@ exports.seed = function(knex, Promise) {
                     discord_avatar: 'someimage2'
                 },
                 {
-                    id: '352164487001800706',
+                    id: '1',
                     discord_id: '352164487001800706',
                     discord_username: 'helmz',
                     discord_discriminator: '6028',
