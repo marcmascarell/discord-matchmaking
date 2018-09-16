@@ -37,7 +37,8 @@ export default class Match extends Model {
             'mapNames',
             'playersPerTeam',
             'playerNames',
-            'playerIds'
+            'playerIds',
+            'playerDiscordIds',
         ];
     }
 
@@ -137,10 +138,19 @@ export default class Match extends Model {
             return []
         }
 
-        return this.players.map(player => player.username);
+        return this.players.map(player => player.discordUsername);
     }
 
-    playerIds() : string[] {
+    playerDiscordIds() : string[] {
+        if (!this.players) {
+            console.log('No players given... did you load the relation?')
+            return []
+        }
+
+        return this.players.map(player => player.discordId);
+    }
+
+    playerIds() : number[] {
         if (!this.players) {
             console.log('No players given... did you load the relation?')
             return []
@@ -154,7 +164,7 @@ export default class Match extends Model {
     }
 
     static isPlayerInMatch(match : Match, player : {id: string}) : boolean {
-        return utils.includes(match.playerIds(), player.id)
+        return utils.includes(match.playerDiscordIds(), player.id)
     }
 
     static isPlayerInMatches(matches : Match[], player : {id : string}) {
@@ -178,18 +188,20 @@ export default class Match extends Model {
             .findById(id)
     }
 
-    join(player : {id: string, username: string, discriminator: string, avatar: string}) {
+    async join(player : {id: string, username: string, discriminator: string, avatar: string}) {
+        const user = await User.upsertByDiscordId(player.id, player)
+
         const query : any = {
             id: this.id,
             last_activity_at: moment().format('YYYY-MM-DD HH:mm:ss'),
             players: [
                 {
-                    id: player.id
+                    id: user.id
                 }
             ]
         }
 
-        return Match
+        return await Match
             .query()
             .upsertGraph(query,
                 {
@@ -198,33 +210,19 @@ export default class Match extends Model {
                     noDelete: true
                 }
             )
-            .then(() => {
-                return User
-                    .query()
-                    .upsertGraph({
-                        id: player.id,
-                        username: player.username,
-                        discriminator: player.discriminator,
-                        avatar: player.avatar
-                    }, {
-                        insertMissing: true,
-                        noDelete: true
-                    })
-            })
-            .then(() => {
-
-            })
             .then(() => Match.getFullMatchById(this.id))
     }
 
-    leave(player : User) {
+    async leave(player : {id: string}) {
         const wasLastPlayerInMatch = this.players.length === 1
+
+        const user = await User.findByDiscordId(player.id)
 
         return MatchPlayers
             .query()
             .delete()
             .where('match_id', this.id)
-            .where('user_id', player.id)
+            .where('user_id', user.id)
             .then(deleted => {
                 if (wasLastPlayerInMatch) {
                     this.cancel(Match.REMOVAL_REASONS.DESERTION)
@@ -251,7 +249,7 @@ export default class Match extends Model {
         return this.players.length && this.players.length < this.maxPlayers;
     }
 
-    static create(match : any, createdBy : any) {
+    static async create(match : any, createdBy : any) {
         const matchData = {
             max_players: match.maxPlayers,
             maps: match.maps,
@@ -261,26 +259,15 @@ export default class Match extends Model {
             channel_id: match.channel.id
         }
 
-        return User
+        const user = await User.upsertByDiscordId(createdBy.id, createdBy)
+
+        return Match
             .query()
-            .upsertGraph({
-                id: createdBy.id,
-                username: createdBy.username,
-                discriminator: createdBy.discriminator,
-                avatar: createdBy.avatar
-            }, {
+            .upsertGraph(
+                matchData,
+            {
                 insertMissing: true,
                 noDelete: true
-            })
-            .then(() => {
-                return Match
-                    .query()
-                    .upsertGraph(
-                        matchData,
-                    {
-                        insertMissing: true,
-                        noDelete: true
-                    })
             })
             .then((match : Match) => {
                 return new Promise((resolve) => {
@@ -289,7 +276,7 @@ export default class Match extends Model {
                         .insertGraph(
                             {
                                 match_id: match.id,
-                                user_id: createdBy.id,
+                                user_id: user.id,
                             }
                         )
                         // return match

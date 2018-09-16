@@ -1,7 +1,6 @@
 import {CommandMessage, CommandoClient} from "discord.js-commando"
 const Discord = require("discord.js")
 
-import _ from 'lodash'
 import secrets from '../../secrets'
 import utils from '../../Utilities/utils'
 import Match from '../../Models/Match'
@@ -12,7 +11,7 @@ export default class JoinCommand extends BaseCommand {
         super(client, {
             name: 'admin',
             memberName: 'admin',
-            description: 'Admin match info.',
+            description: 'Admin match info. (Only available for admins)',
             group: 'match',
 
             args: [

@@ -15,11 +15,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/knex": "^0.14.14",
-    "@types/node": "^10.1.2",
+    "@types/knex": "^0.14.15",
+    "@types/node": "^10.5.2",
+    "cors": "^2.8.4",
     "discord.js": "^11.3.2",
     "discord.js-commando": "^0.10.0",
-    "dots-wrapper": "^2.1.0",
+    "dots-wrapper": "^2.1.13-0",
     "express": "^4.16.3",
     "firebase-admin": "^5.12.1",
     "gamedig": "^1.0.46",
@@ -28,7 +29,7 @@
     "moment": "^2.22.1",
     "objection": "^1.1.9",
     "request": "^2.86.0",
-    "sqlite3": "^4.0.0"
+    "sqlite3": "^4.0.2"
   },
   "devDependencies": {
     "@types/es6-promise": "^3.3.0",

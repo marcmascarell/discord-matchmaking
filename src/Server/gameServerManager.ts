@@ -104,7 +104,7 @@ const create = (
                     throw new Error('Failed to create server')
                 }
             }, (err : Error) => {
-                console.log(err)
+                console.log('Digital Ocean Error', err)
                 reject(err)
             });
         })

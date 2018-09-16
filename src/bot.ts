@@ -1,8 +1,10 @@
+import LogCommand from "./Models/LogCommand"
+
 const Commando = require('discord.js-commando');
 const path = require('path');
 import secrets from './secrets'
 import utils from './Utilities/utils'
-import {Guild} from "discord.js"
+import {Guild, GuildChannel, TextChannel} from "discord.js"
 
 let botReady = false
 
@@ -16,8 +18,24 @@ const getClient = () => client
 const isReady = () => botReady
 
 const init = () => {
+    if (secrets.logCommands) {
+        client.on('commandRun', async (command, promise, message, args) => {
+            await LogCommand
+                .query()
+                .insert({
+                    command: `${command.groupID}:${command.name} ${args.command || ''}`,
+                    discord_username: message.message.author.username,
+                    discord_user_id: message.message.author.id,
+                    discord_guild: message.message.channel.type === 'dm' ? 'DM' : message.message.channel.guild.id
+                });
+        })
+    }
+
     client.on('ready', async () => {
+        console.log('BOT is ready.')
         botReady = true
+
+        client.user.setActivity('!help', { type: 'LISTENING' })
 
         client.registry
             .registerDefaultTypes()
@@ -49,15 +67,18 @@ const init = () => {
 
             // Do nothing if the channel wasn't found on this server
             if (!channel) return;
+
             // Send the message, mentioning the member
-            channel.send(`Welcome ${member}! Use \`!help\`.`);
+            channel.send(`Welcome **${member}** to the **COD1 Community**! Stay tuned for future events.\n_Use \`!help\` to see what can I do for you._`, {
+                files: ['https://cdn.discordapp.com/attachments/438725577831219210/484395447939629086/make-cod-great-again.jpg']
+            });
         });
     })
 
     client.login(secrets.discordToken);
 }
 
-const getChannel = async (guildName, channelName) => {
+const getChannel = async (guildName, channelName) : Promise<TextChannel|GuildChannel|any> => {
     const guild : Guild = await getClient().guilds.find(guild => guild.name === guildName)
 
     if (!guild) return null

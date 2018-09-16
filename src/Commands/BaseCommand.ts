@@ -1,19 +1,13 @@
-import {Command, CommandInfo, CommandoClient} from "discord.js-commando"
+import {Command} from "discord.js-commando"
+import utils from "../Utilities/utils";
+import {GuildResolvable} from "discord.js";
 
-import {GuildResolvable} from "discord.js"
-import utils from '../Utilities/utils'
 
 export default abstract class BaseCommand extends Command {
 
-    public guildOnly: boolean = true;
-
-    isEnabledIn(guild : GuildResolvable) {
-        const isGuildOnlyDev = utils.isGuildOnlyDev(guild)
-
-        return (
-            utils.isDevelopment() && isGuildOnlyDev ||
-            utils.isProduction() && ! isGuildOnlyDev
-        )
-    }
+    // Will disable production bot commands while we are developing
+    // isEnabledIn(guild : GuildResolvable) {
+    //     return !(utils.isDevelopmentGuild(guild) && utils.isProduction())
+    // }
 
 };
