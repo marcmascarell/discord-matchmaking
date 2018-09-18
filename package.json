@@ -12,6 +12,11 @@
     "api": "cross-env NODE_ENV=production node dist/api.js",
     "production": "cross-env NODE_ENV=production node dist/index.js"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -35,6 +40,7 @@
     "@types/es6-promise": "^3.3.0",
     "@types/lodash": "^4.14.109",
     "cross-env": "^5.1.5",
+    "prettier": "1.14.2",
     "shipit-cli": "^4.1.0",
     "shipit-deploy": "^4.1.0",
     "typescript": "^2.8.3"
