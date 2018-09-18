@@ -23,25 +23,55 @@ const createCategory = async (guild, name) => {
         .clone(name)
 }
 
-const createVoiceChannel = async (guild, category, userLimit, name) => {
-    const voiceChannels = guild.channels.filter(channel => channel.type === 'voice')
+const createChannel = async (guild, name, options : {
+    category: string|null,
+    userLimit: number|null,
+    type: string|null
+}) => {
+    options = Object.assign({}, {
+        category: null,
+        userLimit: null,
+        type: 'text'
+    }, options)
+
+    const voiceChannels = guild.channels.filter(channel => channel.type === options.type)
 
     const voiceChannel = <VoiceChannel> voiceChannels.first()
 
     const newChannel = await voiceChannel.clone(name)
-    newChannel.setParent(category)
 
-    newChannel.edit({
-        userLimit
-    })
+    if (options.category) {
+        newChannel.setParent(options.category)
+    }
+
+    if (options.userLimit) {
+        newChannel.edit({
+            userLimit: options.userLimit
+        })
+    }
 
     newChannel.createInvite().then(invite => {
         console.log('invite', invite)
     })
 }
 
+const createTextChannel = async (guild, name, options : {category, userLimit}) => {
+    createChannel(guild, name, {
+        ...options,
+        type: 'text'
+    })
+}
+
+const createVoiceChannel = async (guild, name, options : {category, userLimit}) => {
+    createChannel(guild, name, {
+        ...options,
+        type: 'voice'
+    })
+}
+
 export default {
     createCategory,
     createVoiceChannel,
+    createTextChannel,
     isDevelopmentGuild,
 }

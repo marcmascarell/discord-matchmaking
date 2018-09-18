@@ -15,11 +15,18 @@ export default class CreateVoiceChannels extends Listener {
             return
         }
 
-        const voiceMatchesCategory = await discordUtils.createCategory(guild, 'Matches')
+        const category = await discordUtils.createCategory(guild, 'Matches')
         const userLimit = match.maxPlayers / 2
 
-        discordUtils.createVoiceChannel(guild, voiceMatchesCategory, userLimit, `Match #${match.id} | Blue`)
-        discordUtils.createVoiceChannel(guild, voiceMatchesCategory, userLimit, `Match #${match.id} | Red`)
+        discordUtils.createVoiceChannel(guild, `Match #${match.id} | Blue`, {
+            category,
+            userLimit
+        })
+
+        discordUtils.createVoiceChannel(guild, `Match #${match.id} | Red`, {
+            category,
+            userLimit
+        })
     }
 
 }
