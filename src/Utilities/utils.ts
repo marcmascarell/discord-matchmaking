@@ -1,5 +1,4 @@
 import secrets from "../secrets"
-import {Guild, GuildResolvable} from "discord.js"
 import moment from 'moment'
 import request from 'request'
 import _ from 'lodash'
@@ -56,12 +55,6 @@ const fetchServersStatus = async (servers : Array<{
     })
 
     return serversStatus.filter(serverStatus => serverStatus !== null)
-}
-
-const isDevelopmentGuild = (guild : GuildResolvable) => {
-    const id = guild instanceof Guild ? guild.id : guild
-
-    return includes(secrets.guilds.development, id)
 }
 
 const forEachPromise = (collection, promise) => {
@@ -149,7 +142,6 @@ export default {
     getPasswordForServer,
     getServerNameForMatch,
     getEnvironment,
-    isDevelopmentGuild,
     isDevelopment,
     isProduction,
     includes,
