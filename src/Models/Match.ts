@@ -126,26 +126,6 @@ export default class Match extends Model {
         return this.server.status === 'online'
     }
 
-    setServer(server: any) {
-        const serverName = this.getServerName()
-
-        return Server
-            .query()
-            .insertGraph({
-                name: serverName,
-                ip: server.ip,
-                user_id: null,
-                password: server.password,
-                rcon: server.rcon,
-                slots: server.slots,
-                creation_request_at: null, // todo?
-                provisioned_at: moment().format('YYYY-MM-DD HH:mm:ss'),
-                status: server.status,
-                destroy_at: moment().add('1', 'hour').add('15', 'minutes').format('YYYY-MM-DD HH:mm:ss'),
-                destroyed_at: null,
-            })
-    }
-
     playerNames() : string[] {
         if (!this.players) {
             console.log('No players given... did you load the relation?')

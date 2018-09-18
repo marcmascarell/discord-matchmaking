@@ -4,14 +4,31 @@ import gameServerManager from '../Server/gameServerManager'
 import ServerLimitReached from '../Errors/ServerLimitReached'
 import Match from "../Models/Match"
 import firestore from "../firestore"
+import Server from "../Models/Server";
+import moment from "moment";
 
 export default class CreateMatchServer extends Listener {
 
-	handle({match} : {match: Match}) {
+	async handle({match} : {match: Match}) {
         const channel = match.getChannel()
         const serverName = match.getServerName()
 
         console.log(`Creating server for match #${match.id}...`)
+
+        const server = await Server
+            .query()
+            .insertGraph({
+                name: serverName,
+                creation_request_at: moment().format('YYYY-MM-DD HH:mm:ss'),
+                status: Server.STATUS_CREATING,
+            })
+
+        await Match
+            .query()
+            .update({
+                server_id: server.id
+            })
+            .where('id', match.id)
 
         gameServerManager
             .create(serverName, {
@@ -30,16 +47,21 @@ export default class CreateMatchServer extends Listener {
                     .onSnapshot(async docSnapshot => {
                         if (!docSnapshot.empty) {
                             const server = docSnapshot.docs[0].data()
-                            const createdServer = await match.setServer(server)
 
-                            console.log('createdServer', createdServer)
-
-                            await Match
+                            const createdServer = await Server
                                 .query()
                                 .update({
-                                    server_id: createdServer.id
+                                    ip: server.ip,
+                                    password: server.password,
+                                    rcon: server.rcon,
+                                    slots: server.slots,
+                                    provisioned_at: moment().format('YYYY-MM-DD HH:mm:ss'),
+                                    status: Server.STATUS_CREATED,
+                                    destroy_at: moment().add('1', 'hour').add('15', 'minutes').format('YYYY-MM-DD HH:mm:ss'),
                                 })
-                                .where('id', match.id)
+                                .where('id', server.id)
+
+                            console.log('createdServer', createdServer)
 
                             const matchWithServer = await Match.getFullMatchById(match.id)
 
