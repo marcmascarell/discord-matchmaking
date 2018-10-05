@@ -4,7 +4,7 @@ import {Client, VoiceChannel} from "discord.js"
 import bot from "../bot"
 import _ from "lodash"
 
-export default class DeleteVoiceChannels extends Listener {
+export default class DeleteMatchVoiceChannels extends Listener {
 
     async handle({match} : {match: Match}) {
         const client = <Client> bot.getClient()

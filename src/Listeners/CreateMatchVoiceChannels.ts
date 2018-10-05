@@ -4,7 +4,7 @@ import {Client} from "discord.js"
 import bot from "../bot"
 import discordUtils from "../Utilities/discordUtils";
 
-export default class CreateVoiceChannels extends Listener {
+export default class CreateMatchVoiceChannels extends Listener {
 
 	async handle({match} : {match: Match}) {
         const client = <Client> bot.getClient()

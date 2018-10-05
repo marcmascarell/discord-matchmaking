@@ -15,7 +15,7 @@ export default class NotifyNewMatch extends Listener {
 
         embed.setColor('#00b5b6')
 
-        match.getChannel().send(embed)
+        match.sendToChannel(embed)
     }
 
 }

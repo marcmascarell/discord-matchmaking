@@ -1,6 +1,7 @@
-import {Guild, GuildResolvable, VoiceChannel} from "discord.js";
+import {Guild, GuildChannel, GuildResolvable, TextChannel, VoiceChannel} from "discord.js";
 import secrets from "../secrets";
 import utils from "./utils";
+import bot from "../bot"
 
 const isDevelopmentGuild = (guild : GuildResolvable) => {
     const id = guild instanceof Guild ? guild.id : guild
@@ -9,9 +10,7 @@ const isDevelopmentGuild = (guild : GuildResolvable) => {
 }
 
 const createCategory = async (guild, name) => {
-    const category = await guild.channels
-        .filter(channel => channel.type === 'category')
-        .find(channel => channel.name === name)
+    const category = await bot.getCategoryByName(guild, name)
 
     if (category) {
         return category
@@ -27,7 +26,7 @@ const createChannel = async (guild, name, options : {
     category: string|null,
     userLimit: number|null,
     type: string|null
-}) => {
+}) : Promise<TextChannel|GuildChannel|any> => {
     options = Object.assign({}, {
         category: null,
         userLimit: null,
@@ -51,22 +50,29 @@ const createChannel = async (guild, name, options : {
     }
 
     newChannel.createInvite().then(invite => {
-        console.log('invite', invite)
+        // console.log('invite', invite)
     })
+
+    return newChannel
 }
 
-const createTextChannel = async (guild, name, options : {category, userLimit}) => {
-    createChannel(guild, name, {
+const createTextChannel = async (guild, name, options : {category, userLimit}) : Promise<TextChannel> => {
+    return createChannel(guild, name, {
         ...options,
         type: 'text'
     })
 }
 
-const createVoiceChannel = async (guild, name, options : {category, userLimit}) => {
-    createChannel(guild, name, {
+const createVoiceChannel = async (guild, name, options : {category, userLimit}) : Promise<GuildChannel> => {
+    return createChannel(guild, name, {
         ...options,
         type: 'voice'
     })
+}
+const getScheduledTextChannel = async (match) => {
+    const guild = await bot.getGuildById(match.guildId)
+    const category = await bot.getCategoryByName(guild, 'scheduled-matches')
+    return await category.children.find(channel => channel.name.endsWith(`-${match.id}`))
 }
 
 export default {
@@ -74,4 +80,5 @@ export default {
     createVoiceChannel,
     createTextChannel,
     isDevelopmentGuild,
+    getScheduledTextChannel,
 }

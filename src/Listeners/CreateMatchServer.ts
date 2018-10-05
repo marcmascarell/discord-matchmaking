@@ -10,7 +10,7 @@ import moment from "moment";
 export default class CreateMatchServer extends Listener {
 
 	async handle({match} : {match: Match}) {
-        const channel = match.getChannel()
+        const channel = await match.getChannel()
         const serverName = match.getServerName()
 
         console.log(`Creating server for match #${match.id}...`)

@@ -3,6 +3,11 @@ import Match from "../../Models/Match"
 import MatchReady from "../../Events/MatchReady"
 import BaseCommand from "../BaseCommand";
 import utils from "../../Utilities/utils"
+import {RichEmbed} from "discord.js";
+import bot from "../../bot";
+import MatchCard from "../../Embeds/MatchCard";
+import discordUtils from "../../Utilities/discordUtils";
+
 
 export default class JoinCommand extends BaseCommand {
     constructor(client : CommandoClient) {
@@ -61,9 +66,14 @@ export default class JoinCommand extends BaseCommand {
         }
 
         if (joinedMatch.isScheduled()) {
-            return message.reply(`Joined scheduled match ${match.id}. Remember, the match is scheduled for ${utils.getHumanSpecificFormattedDate(match.scheduledAt)}`);
+            const embed = new MatchCard(joinedMatch).render()
+
+            const channel = await discordUtils.getScheduledTextChannel(joinedMatch)
+            channel.send(embed)
+
         }
 
         return message.reply(`Joined match ${match.id}`);
     }
 };
+

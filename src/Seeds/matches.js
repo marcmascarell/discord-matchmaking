@@ -97,7 +97,6 @@ exports.seed = function(knex, Promise) {
                     server_id: null,
                     created_at: moment().format('YYYY-MM-DD HH:mm:ss'),
 
-                    // It was already canceled
                     last_activity_at: moment().format('YYYY-MM-DD HH:mm:ss'),
                     canceled_reason: null,
                     maps: 'random',

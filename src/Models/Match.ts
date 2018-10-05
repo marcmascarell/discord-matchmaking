@@ -226,12 +226,16 @@ export default class Match extends Model {
             })
     }
 
-    getChannel() {
-        return bot.getClient()
+    async getChannel() {
+        const guildOfTheChannel = bot.getClient()
             .guilds
             .find((guild : Guild) => guild.id === this.guildId)
-            .channels
-            .find((channel : Channel) => channel.id === this.channelId)
+        return await guildOfTheChannel.channels.find((channel : Channel) => channel.id === this.channelId)
+    }
+
+    async sendToChannel(messaage){
+        const channel = await this.getChannel()
+        channel.send(messaage)
     }
 
     isWaitingForPlayers() {
