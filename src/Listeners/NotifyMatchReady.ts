@@ -7,7 +7,6 @@ export default class NotifyMatchReady extends Listener {
     handle({match} : {match: Match})
     {
         const embed = new MatchCard(match).render()
-        const channel = match.getChannel()
 
         embed.setTitle('Match is ready')
         embed.setColor('#2db600')
@@ -29,7 +28,7 @@ export default class NotifyMatchReady extends Listener {
 
         embed.setFooter(`Preparing server... (~3min. aprox)`)
 
-        channel.send(embed)
+        match.sendToChannel(embed)
     }
 
 }

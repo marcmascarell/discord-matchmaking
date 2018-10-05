@@ -7,9 +7,9 @@ import MatchCard from "../Embeds/MatchCard"
 
 export default class SendServerInfoToPlayers extends Listener {
 
-	handle({match} : {match: Match}) {
+	async handle({match} : {match: Match}) {
         const minutes = 75 // minutes until match is declared ended
-        const channel = match.getChannel()
+        const channel = await match.getChannel()
 
         if (! match.isServerOnline()) {
             channel.send(`Something went wrong provisioning the server for match ${match.id}...`)
