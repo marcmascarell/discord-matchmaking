@@ -2,6 +2,12 @@ import {CommandMessage, CommandoClient} from "discord.js-commando"
 import Match from "../../Models/Match"
 import MatchReady from "../../Events/MatchReady"
 import BaseCommand from "../BaseCommand";
+import utils from "../../Utilities/utils"
+import {RichEmbed} from "discord.js";
+import bot from "../../bot";
+import MatchCard from "../../Embeds/MatchCard";
+import discordUtils from "../../Utilities/discordUtils";
+
 
 export default class JoinCommand extends BaseCommand {
     constructor(client : CommandoClient) {
@@ -52,13 +58,22 @@ export default class JoinCommand extends BaseCommand {
             return message.reply(`Could not join match ${match.id}`);
         }
 
-        if (joinedMatch.isReady()) {
+        if (joinedMatch.isFull() && !joinedMatch.isScheduled()) {
             new MatchReady({
                 channel,
                 match: joinedMatch
             })
         }
 
+        if (joinedMatch.isScheduled()) {
+            const embed = new MatchCard(joinedMatch).render()
+
+            const channel = await discordUtils.getScheduledTextChannel(joinedMatch)
+            channel.send(embed)
+
+        }
+
         return message.reply(`Joined match ${match.id}`);
     }
 };
+

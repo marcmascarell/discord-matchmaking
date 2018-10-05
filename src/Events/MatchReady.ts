@@ -1,15 +1,15 @@
 import Event from './Event'
 import NotifyMatchReady from '../Listeners/NotifyMatchReady'
 import CreateMatchServer from '../Listeners/CreateMatchServer'
-import CreateVoiceChannels from "../Listeners/CreateVoiceChannels"
+import CreateMatchVoiceChannels from "../Listeners/CreateMatchVoiceChannels"
 
-export default  class MatchReady extends Event{
+export default class MatchReady extends Event{
 
     get listeners() : Array<any> {
         return [
             CreateMatchServer,
             NotifyMatchReady,
-            CreateVoiceChannels,
+            CreateMatchVoiceChannels,
         ]
     }
 };

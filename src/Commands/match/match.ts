@@ -33,27 +33,6 @@ export default class MatchCommand extends BaseCommand {
     }
 
     async run(message : CommandMessage, { players, map } : { players : string, map : string}) {
-        // This works with 5, 5v5, 5vs5 formats
-        const playersPerTeam = parseInt(players[0], 10)
-
-        if (isNaN(playersPerTeam)) {
-            return message.reply(`Invalid player number. Write it like this: 5 or 5v5 or 5vs5 (NvsN)`);
-        }
-
-        const maxPlayers = playersPerTeam * 2
-
-        if (playersPerTeam < 2) {
-            return message.reply(`2 players per team is the minmum`);
-        }
-
-        if (playersPerTeam > 6) {
-            return message.reply(`6 players per team is the maximum`);
-        }
-
-        if (maxPlayers % 2 !== 0) {
-            return message.reply(`Players must be divisible by 2`);
-        }
-
         const player = message.author
         const channel = message.channel
         const matchesWaitingForPlayers = await Match.getWaitingForPlayers()
@@ -70,7 +49,7 @@ export default class MatchCommand extends BaseCommand {
         const match = await Match.create(
             {
                 channel,
-                maxPlayers,
+                maxPlayers: parseInt(players) * 2,
                 maps: map,
                 creator_id: player.id
             },
@@ -81,6 +60,7 @@ export default class MatchCommand extends BaseCommand {
             return message.reply(`Could not create the match... Please, contact an admin`);
         }
 
-        return message.reply(`New match created!`);
+        // The match creation will be notified with a RichEmbed
+        return null;
     }
 };

@@ -1,3 +1,5 @@
+import DeletedMatchDueToScheduledMatchNotFilled from "../Events/DeletedMatchDueToScheduledMatchNotFilled"
+
 const _ = require('lodash');
 const moment = require('moment');
 
@@ -24,6 +26,8 @@ export default class Match extends Model {
     public canceled_reason : string
     public server: Server
     public deleted_at : string
+    public scheduledAt : string
+    public scheduled_at : string
     public last_activity_at : string
 
     static get tableName() {
@@ -32,7 +36,8 @@ export default class Match extends Model {
 
     static get virtualAttributes() {
         return [
-            'isReady',
+            'isFull',
+            'isScheduled',
             'isWaitingForPlayers',
             'mapNames',
             'playersPerTeam',
@@ -55,12 +60,17 @@ export default class Match extends Model {
     static get REMOVAL_REASONS() {
         return {
             INACTIVITY: 'INACTIVITY',
+            SCHEDULED_MATCH_NOT_FULLFILLED: 'SCHEDULED_MATCH_NOT_FULLFILLED',
             DESERTION: 'DESERTION',
             ENDED: 'ENDED',
         }
     }
 
-    isReady() {
+    isScheduled() {
+        return !! this.scheduledAt;
+    }
+
+    isFull() {
         if (!this.players) {
             console.log('No players given... did you load the relation?')
             return false
@@ -93,6 +103,10 @@ export default class Match extends Model {
             new DeletedMatchDueToMatchEnding(this)
         }
 
+        if (reason === Match.REMOVAL_REASONS.SCHEDULED_MATCH_NOT_FULLFILLED) {
+            new DeletedMatchDueToScheduledMatchNotFilled(this)
+        }
+
         return Match
                 .query()
                 .update({
@@ -110,26 +124,6 @@ export default class Match extends Model {
         }
 
         return this.server.status === 'online'
-    }
-
-    setServer(server: any) {
-        const serverName = this.getServerName()
-
-        return Server
-            .query()
-            .insertGraph({
-                name: serverName,
-                ip: server.ip,
-                user_id: null,
-                password: server.password,
-                rcon: server.rcon,
-                slots: server.slots,
-                creation_request_at: null, // todo?
-                provisioned_at: moment().format('YYYY-MM-DD HH:mm:ss'),
-                status: server.status,
-                destroy_at: moment().add('1', 'hour').add('15', 'minutes').format('YYYY-MM-DD HH:mm:ss'),
-                destroyed_at: null,
-            })
     }
 
     playerNames() : string[] {
@@ -232,12 +226,16 @@ export default class Match extends Model {
             })
     }
 
-    getChannel() {
-        return bot.getClient()
+    async getChannel() {
+        const guildOfTheChannel = bot.getClient()
             .guilds
             .find((guild : Guild) => guild.id === this.guildId)
-            .channels
-            .find((channel : Channel) => channel.id === this.channelId)
+        return await guildOfTheChannel.channels.find((channel : Channel) => channel.id === this.channelId)
+    }
+
+    async sendToChannel(messaage){
+        const channel = await this.getChannel()
+        channel.send(messaage)
     }
 
     isWaitingForPlayers() {
@@ -256,7 +254,8 @@ export default class Match extends Model {
             creator_id: createdBy.id,
             last_activity_at: moment().format('YYYY-MM-DD HH:mm:ss'),
             guild_id: match.channel.guild.id,
-            channel_id: match.channel.id
+            channel_id: match.channel.id,
+            scheduled_at: match.scheduled_at ? match.scheduled_at.format('YYYY-MM-DD HH:mm:ss') : null,
         }
 
         const user = await User.upsertByDiscordId(createdBy.id, createdBy)
