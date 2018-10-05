@@ -85,8 +85,15 @@ Refresh:
 knex migrate:rollback
 knex migrate:latest
 knex seed:run
-
 ```
+
+## Code Style
+
+We run a precommit hook that executes Prettier.
+
+However, if you want to force Prettier's execution you can do it like this:
+
+`npx prettier --write src/**/*`
 
 ## License
 
