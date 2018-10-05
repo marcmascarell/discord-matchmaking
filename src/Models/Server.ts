@@ -1,8 +1,8 @@
-const moment = require('moment');
-import Model from './BaseModel'
-import Match from './Match'
-import User from './User'
-import gameServerManager from '../Server/gameServerManager'
+const moment = require("moment")
+import Model from "./BaseModel"
+import Match from "./Match"
+import User from "./User"
+import gameServerManager from "../Server/gameServerManager"
 
 export default class Server extends Model {
     public id: number
@@ -19,13 +19,13 @@ export default class Server extends Model {
     public destroy_at: string
     public provisioned_at: string
 
-    static readonly STATUS_CREATING = 'creating';
-    static readonly STATUS_CREATED = 'created';
-    static readonly STATUS_DESTROYING = 'destroying';
-    static readonly STATUS_DESTROYED = 'destroyed';
+    static readonly STATUS_CREATING = "creating"
+    static readonly STATUS_CREATED = "created"
+    static readonly STATUS_DESTROYING = "destroying"
+    static readonly STATUS_DESTROYED = "destroyed"
 
     static get tableName() {
-        return 'servers';
+        return "servers"
     }
 
     static relationMappings() {
@@ -34,16 +34,19 @@ export default class Server extends Model {
                 relation: Model.BelongsToOneRelation,
                 modelClass: User,
                 join: {
-                    from: 'servers.user_id',
-                    to: 'users.id'
-                }
-            }
+                    from: "servers.user_id",
+                    to: "users.id",
+                },
+            },
         }
     }
 
-    static async destroy(match : Match) {
-        if (! match) {
-            console.log('Unable to destroy server, match not found for server', match.id)
+    static async destroy(match: Match) {
+        if (!match) {
+            console.log(
+                "Unable to destroy server, match not found for server",
+                match.id,
+            )
 
             return
         }
@@ -51,22 +54,21 @@ export default class Server extends Model {
         return gameServerManager
             .destroy(match)
             .then(() => {
-                return Server
-                        .query()
-                        .where('id', match.server.id)
-                        .update({
-                            destroyed_at: moment().format('YYYY-MM-DD HH:mm:ss'),
-                            status: 'destroyed'
-                        })
+                return Server.query()
+                    .where("id", match.server.id)
+                    .update({
+                        destroyed_at: moment().format("YYYY-MM-DD HH:mm:ss"),
+                        status: "destroyed",
+                    })
             })
-            .catch((e : Error) => {
+            .catch((e: Error) => {
                 console.log(e.stack)
             })
     }
 
     getMatch() {
         return Match.query()
-            .eager('[server.providedBy]')
-            .findOne('server_id', this.id)
+            .eager("[server.providedBy]")
+            .findOne("server_id", this.id)
     }
 }

@@ -1,9 +1,15 @@
-import {Guild, GuildChannel, GuildResolvable, TextChannel, VoiceChannel} from "discord.js";
-import secrets from "../secrets";
-import utils from "./utils";
+import {
+    Guild,
+    GuildChannel,
+    GuildResolvable,
+    TextChannel,
+    VoiceChannel,
+} from "discord.js"
+import secrets from "../secrets"
+import utils from "./utils"
 import bot from "../bot"
 
-const isDevelopmentGuild = (guild : GuildResolvable) => {
+const isDevelopmentGuild = (guild: GuildResolvable) => {
     const id = guild instanceof Guild ? guild.id : guild
 
     return utils.includes(secrets.guilds.development, id)
@@ -17,25 +23,35 @@ const createCategory = async (guild, name) => {
     }
 
     return guild.channels
-        .filter(channel => channel.type === 'category')
+        .filter(channel => channel.type === "category")
         .first()
         .clone(name)
 }
 
-const createChannel = async (guild, name, options : {
-    category: string|null,
-    userLimit: number|null,
-    type: string|null
-}) : Promise<TextChannel|GuildChannel|any> => {
-    options = Object.assign({}, {
-        category: null,
-        userLimit: null,
-        type: 'text'
-    }, options)
+const createChannel = async (
+    guild,
+    name,
+    options: {
+        category: string | null
+        userLimit: number | null
+        type: string | null
+    },
+): Promise<TextChannel | GuildChannel | any> => {
+    options = Object.assign(
+        {},
+        {
+            category: null,
+            userLimit: null,
+            type: "text",
+        },
+        options,
+    )
 
-    const voiceChannels = guild.channels.filter(channel => channel.type === options.type)
+    const voiceChannels = guild.channels.filter(
+        channel => channel.type === options.type,
+    )
 
-    const voiceChannel = <VoiceChannel> voiceChannels.first()
+    const voiceChannel = <VoiceChannel>voiceChannels.first()
 
     const newChannel = await voiceChannel.clone(name)
 
@@ -45,7 +61,7 @@ const createChannel = async (guild, name, options : {
 
     if (options.userLimit) {
         newChannel.edit({
-            userLimit: options.userLimit
+            userLimit: options.userLimit,
         })
     }
 
@@ -56,23 +72,33 @@ const createChannel = async (guild, name, options : {
     return newChannel
 }
 
-const createTextChannel = async (guild, name, options : {category, userLimit}) : Promise<TextChannel> => {
+const createTextChannel = async (
+    guild,
+    name,
+    options: { category; userLimit },
+): Promise<TextChannel> => {
     return createChannel(guild, name, {
         ...options,
-        type: 'text'
+        type: "text",
     })
 }
 
-const createVoiceChannel = async (guild, name, options : {category, userLimit}) : Promise<GuildChannel> => {
+const createVoiceChannel = async (
+    guild,
+    name,
+    options: { category; userLimit },
+): Promise<GuildChannel> => {
     return createChannel(guild, name, {
         ...options,
-        type: 'voice'
+        type: "voice",
     })
 }
-const getScheduledTextChannel = async (match) => {
+const getScheduledTextChannel = async match => {
     const guild = await bot.getGuildById(match.guildId)
-    const category = await bot.getCategoryByName(guild, 'scheduled-matches')
-    return await category.children.find(channel => channel.name.endsWith(`-${match.id}`))
+    const category = await bot.getCategoryByName(guild, "scheduled-matches")
+    return await category.children.find(channel =>
+        channel.name.endsWith(`-${match.id}`),
+    )
 }
 
 export default {

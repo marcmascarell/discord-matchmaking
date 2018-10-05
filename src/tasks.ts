@@ -1,16 +1,16 @@
-import Server from './Models/Server'
-import Match from './Models/Match'
-import LogUserActivity from './Models/LogUserActivity'
-import bot from './bot'
+import Server from "./Models/Server"
+import Match from "./Models/Match"
+import LogUserActivity from "./Models/LogUserActivity"
+import bot from "./bot"
 import NotifyStreams from "./Listeners/NotifyStreams"
 import utils from "./Utilities/utils"
 import ServerStatusCard from "./Embeds/ServerStatusCard"
 import secrets from "./secrets"
-const Gamedig = require('gamedig');
-import LogProcessedActivity from "./Models/LogProcessedActivity";
-import User from "./Models/User";
-const moment = require('moment');
-const _ = require('lodash');
+const Gamedig = require("gamedig")
+import LogProcessedActivity from "./Models/LogProcessedActivity"
+import User from "./Models/User"
+const moment = require("moment")
+const _ = require("lodash")
 
 let lastPublicServersNotification
 
@@ -47,9 +47,9 @@ const init = () => {
 }
 
 const monitorPublicServers = async () => {
-    const channel = await bot.getChannel('COD1 Community', 'general')
+    const channel = await bot.getChannel("COD1 Community", "general")
 
-    if (! channel) return
+    if (!channel) return
 
     const serversStatus = await utils.fetchServersStatus(secrets.publicServers)
 
@@ -62,9 +62,8 @@ const monitorPublicServers = async () => {
         })
 
     if (
-        embeds.length &&
-            !lastPublicServersNotification ||
-            moment().diff(lastPublicServersNotification, 'hour') > 1
+        (embeds.length && !lastPublicServersNotification) ||
+        moment().diff(lastPublicServersNotification, "hour") > 1
     ) {
         embeds.forEach(embed => {
             channel.send(embed)
@@ -76,51 +75,54 @@ const monitorPublicServers = async () => {
 
 const lookForNewStreams = async () => {
     try {
-        const streams : any = await utils.getStreams(true)
+        const streams: any = await utils.getStreams(true)
 
         if (!streams || streams.length === 0) return
 
-        const channel = await bot.getChannel('COD1 Community', 'general')
+        const channel = await bot.getChannel("COD1 Community", "general")
 
-        if (! channel) return
+        if (!channel) return
 
-        new NotifyStreams().handle(channel, streams, 'New stream started right now!')
+        new NotifyStreams().handle(
+            channel,
+            streams,
+            "New stream started right now!",
+        )
     } catch (e) {
         console.log(e)
     }
 }
 
 const lookForDestroyableServers = () => {
-    Server
-        .query()
-        .where('destroy_at', '<', moment().format('YYYY-MM-DD HH:mm:ss'))
-        .whereNull('destroyed_at')
-        .whereNotNull('ip')
-        .whereNull('user_id') // user provided servers can't be destroyed
+    Server.query()
+        .where("destroy_at", "<", moment().format("YYYY-MM-DD HH:mm:ss"))
+        .whereNull("destroyed_at")
+        .whereNotNull("ip")
+        .whereNull("user_id") // user provided servers can't be destroyed
         .then(servers => {
             if (servers.length) {
-                console.log('Destroying servers', servers)
+                console.log("Destroying servers", servers)
             }
 
             servers.forEach(async server => {
                 let isEmpty = true
 
                 try {
-                    const serverInfo = server.ip.split(':')
+                    const serverInfo = server.ip.split(":")
 
                     const gameState = await Gamedig.query({
-                        type: 'cod',
+                        type: "cod",
                         host: serverInfo[0],
-                        port: serverInfo[1]
+                        port: serverInfo[1],
                     })
 
                     isEmpty = gameState.players.length === 0
                 } catch (e) {
-                    console.log('Error querying server', e)
+                    console.log("Error querying server", e)
                 }
 
-                if (! isEmpty) {
-                    return;
+                if (!isEmpty) {
+                    return
                 }
 
                 const match = await server.getMatch()
@@ -131,25 +133,24 @@ const lookForDestroyableServers = () => {
 }
 
 const prepareScheduledMatchesServers = () => {
-    Match.getRecentMatchesQuery()
-        .whereNotNull('scheduled_at')
+    Match.getRecentMatchesQuery().whereNotNull("scheduled_at")
 }
 
-const cancelNonStartedInactiveMatches = ()=> {
+const cancelNonStartedInactiveMatches = () => {
     Match.getRecentMatchesQuery()
-        .where('canceled_reason', null) // Not already canceled
-        .whereNull('scheduled_at') // Non scheduled match
-        .where('server_id', null) // The match did not start
+        .where("canceled_reason", null) // Not already canceled
+        .whereNull("scheduled_at") // Non scheduled match
+        .where("server_id", null) // The match did not start
         .where(
-            'last_activity_at',
-            '<',
+            "last_activity_at",
+            "<",
             moment()
-            .subtract('15', 'minutes')
-            .format('YYYY-MM-DD HH:mm:ss')
+                .subtract("15", "minutes")
+                .format("YYYY-MM-DD HH:mm:ss"),
         )
         .then(matches => {
             if (matches.length) {
-                console.log('Canceling matches INACTIVITY', matches)
+                console.log("Canceling matches INACTIVITY", matches)
             }
 
             matches.forEach(async match => {
@@ -161,17 +162,22 @@ const cancelNonStartedInactiveMatches = ()=> {
 const cancelNotFullFilledScheduledMatches = () => {
     // Cancel matches that
     Match.getRecentMatchesQuery()
-        .where('canceled_reason', null) // Not already canceled
-        .whereNotNull('scheduled_at') // Scheduled match
-        .where('scheduled_at', '<', moment().format('YYYY-MM-DD HH:mm:ss'))
+        .where("canceled_reason", null) // Not already canceled
+        .whereNotNull("scheduled_at") // Scheduled match
+        .where("scheduled_at", "<", moment().format("YYYY-MM-DD HH:mm:ss"))
         .then(matches => {
             if (matches.length) {
-                console.log('Canceling matches SCHEDULED_MATCH_NOT_FULLFILLED', matches)
+                console.log(
+                    "Canceling matches SCHEDULED_MATCH_NOT_FULLFILLED",
+                    matches,
+                )
             }
 
             matches.forEach(match => {
                 if (!match.isFull()) {
-                    match.cancel(Match.REMOVAL_REASONS.SCHEDULED_MATCH_NOT_FULLFILLED)
+                    match.cancel(
+                        Match.REMOVAL_REASONS.SCHEDULED_MATCH_NOT_FULLFILLED,
+                    )
                 }
             })
         })
@@ -183,65 +189,57 @@ const logUsersActivity = async () => {
     }
 
     const onlineUsers = await bot.getClient().users.filter(user => {
-        return user.bot === false && user.presence.status !== 'offline'
-    });
+        return user.bot === false && user.presence.status !== "offline"
+    })
 
     onlineUsers.forEach(async user => {
         const currentUser = await User.upsertByDiscordId(user.id, user)
 
-        await LogUserActivity
-            .query()
-            .insert(
-                {
-                    id: currentUser.id,
-                    game: user.presence.game ? user.presence.game.name : null,
-                    username: user.username,
-                    created_at: moment().format('YYYY-MM-DD HH:mm:ss')
-                })
-    });
+        await LogUserActivity.query().insert({
+            id: currentUser.id,
+            game: user.presence.game ? user.presence.game.name : null,
+            username: user.username,
+            created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
+        })
+    })
 }
 
 // Log Users Activity query
 const processActivity = async () => {
     const activity = await LogUserActivity.query()
 
-    const groupedActivity = _.groupBy(activity, (item : LogUserActivity) => {
-        return moment(item.createdAt).format('YYYY-MM-DD HH:00:00')
+    const groupedActivity = _.groupBy(activity, (item: LogUserActivity) => {
+        return moment(item.createdAt).format("YYYY-MM-DD HH:00:00")
     })
 
-    _.each(groupedActivity, async (items : Array<LogUserActivity>, date) => {
+    _.each(groupedActivity, async (items: Array<LogUserActivity>, date) => {
         const onlinePlaying = _.uniq(
-            items.filter(item => item.game)
-                .map(item => item.id)
-        );
+            items.filter(item => item.game).map(item => item.id),
+        )
 
         const justOnline = _.uniq(
-            items.filter(item => !item.game)
-                .map(item => item.id)
-        );
+            items.filter(item => !item.game).map(item => item.id),
+        )
 
         try {
-            const successInsert = await LogProcessedActivity
-                .query()
-                .insert(
-                    {
-                        online: justOnline.join(','),
-                        playing: onlinePlaying.join(','),
-                        online_at: date
-                    })
+            const successInsert = await LogProcessedActivity.query().insert({
+                online: justOnline.join(","),
+                playing: onlinePlaying.join(","),
+                online_at: date,
+            })
 
             if (successInsert) {
-                await LogUserActivity
-                    .query()
-                    .delete()
+                await LogUserActivity.query().delete()
             }
         } catch (e) {
-            console.log('Something went wrong when inserting processed log.', e.stack)
+            console.log(
+                "Something went wrong when inserting processed log.",
+                e.stack,
+            )
         }
-    });
+    })
 }
 
 export default {
-    init
+    init,
 }
-
