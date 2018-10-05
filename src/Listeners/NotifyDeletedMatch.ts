@@ -5,6 +5,10 @@ export default class NotifyDeletedMatch extends Listener {
     handle({ match }: { match: Match }) {
         let message = `Deleting match #${match.id}...`
 
+        if (match.scheduledAt) {
+            message = `Deleting Scheduled match #${match.id}...`
+        }
+
         if (match.players.length) {
             message +=
                 " **Affected players: `" +
@@ -12,6 +16,6 @@ export default class NotifyDeletedMatch extends Listener {
                 "` **"
         }
 
-        match.getChannel().send(message)
+        match.sendToChannel(message)
     }
 }

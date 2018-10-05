@@ -4,7 +4,7 @@ const Commando = require("discord.js-commando")
 const path = require("path")
 import secrets from "./secrets"
 import utils from "./Utilities/utils"
-import { Guild, GuildChannel, TextChannel } from "discord.js"
+import { Channel, Guild, GuildChannel, TextChannel } from "discord.js"
 
 let botReady = false
 
@@ -85,6 +85,10 @@ const init = () => {
     client.login(secrets.discordToken)
 }
 
+const getGuildById = async (guildId): Promise<Guild> => {
+    return getClient().guilds.find(guild => guild.id === guildId)
+}
+
 const getChannel = async (
     guildName,
     channelName,
@@ -98,9 +102,31 @@ const getChannel = async (
     return await guild.channels.find(channel => channel.name === channelName)
 }
 
+const getChannelById = async (
+    guildId,
+    channelId,
+): Promise<TextChannel | GuildChannel | any> => {
+    const guild: Guild = await getClient().guilds.find(
+        guild => guild.id === guildId,
+    )
+
+    if (!guild) return null
+
+    return await guild.channels.find(channel => channel.id === channelId)
+}
+
+const getCategoryByName = (guild, name) => {
+    return guild.channels
+        .filter(channel => channel.type === "category")
+        .find(channel => channel.name === name)
+}
+
 export default {
     init,
     getClient,
     getChannel,
+    getChannelById,
+    getCategoryByName,
+    getGuildById,
     isReady,
 }

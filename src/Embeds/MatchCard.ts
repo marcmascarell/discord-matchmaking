@@ -1,6 +1,7 @@
 import { RichEmbed } from "discord.js"
 import Match from "../Models/Match"
 import MapType from "../Types/MapArgumentType"
+import utils from "../Utilities/utils"
 
 const Discord = require("discord.js")
 
@@ -25,7 +26,7 @@ export default class MatchCard {
             embed.setThumbnail(mapImage)
         }
 
-        if (match.isReady()) {
+        if (match.isFull()) {
             embed.addField(
                 `${playersPerTeam}vs${playersPerTeam} on ${firstMap}`,
                 match.playerNames().join(", "),
@@ -41,6 +42,12 @@ export default class MatchCard {
             embed.addField(`Join command`, "`!join " + match.id + "`")
         }
 
+        if (match.scheduledAt) {
+            embed.addField(
+                `Scheduled for`,
+                `${utils.getHumanSpecificFormattedDate(match.scheduledAt)}`,
+            )
+        }
         // embed.setFooter(`Created ` + match.createdAt.fromNow())
 
         return embed

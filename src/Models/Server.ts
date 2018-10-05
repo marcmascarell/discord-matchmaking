@@ -19,6 +19,11 @@ export default class Server extends Model {
     public destroy_at: string
     public provisioned_at: string
 
+    static readonly STATUS_CREATING = "creating"
+    static readonly STATUS_CREATED = "created"
+    static readonly STATUS_DESTROYING = "destroying"
+    static readonly STATUS_DESTROYED = "destroyed"
+
     static get tableName() {
         return "servers"
     }

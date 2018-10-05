@@ -6,20 +6,32 @@ exports.seed = function(knex, Promise) {
             // Inserts seed entries
             return knex("match_players").insert([
                 {
-                    user_id: 999,
+                    user_id: 1,
                     match_id: 1,
                 },
                 {
-                    user_id: 888,
+                    user_id: 2,
                     match_id: 1,
                 },
                 {
-                    user_id: 777,
+                    user_id: 3,
                     match_id: 1,
                 },
                 {
-                    user_id: 111,
+                    user_id: 4,
                     match_id: 2,
+                },
+                {
+                    user_id: 5,
+                    match_id: 2,
+                },
+                {
+                    user_id: 6,
+                    match_id: 6,
+                },
+                {
+                    user_id: 7,
+                    match_id: 7,
                 },
             ])
         })

@@ -28,6 +28,8 @@ exports.up = function(knex, Promise) {
         // Players joined
         table.dateTime("last_activity_at").nullable()
 
+        table.dateTime("scheduled_at").nullable()
+
         table.dateTime("deleted_at").nullable()
     })
 }
