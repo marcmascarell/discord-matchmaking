@@ -1,10 +1,10 @@
 import secrets from "../secrets"
-import {Guild, GuildResolvable} from "discord.js"
 import moment from 'moment'
 import request from 'request'
 import _ from 'lodash'
 import crypto from 'crypto'
 const Gamedig = require('gamedig');
+
 
 const getRconForServer = (serverName : string) => {
     return crypto.createHash('md5').update(serverName + secrets.rconSalt).digest("hex")
@@ -55,12 +55,6 @@ const fetchServersStatus = async (servers : Array<{
     })
 
     return serversStatus.filter(serverStatus => serverStatus !== null)
-}
-
-const isDevelopmentGuild = (guild : GuildResolvable) => {
-    const id = guild instanceof Guild ? guild.id : guild
-
-    return includes(secrets.guilds.development, id)
 }
 
 const forEachPromise = (collection, promise) => {
@@ -134,6 +128,11 @@ const includes = (collection, value) => {
     return found !== undefined
 }
 
+const getHumanSpecificFormattedDate = (date) => {
+    return moment(date)
+        .format('dddd, MMMM Do [of] YYYY [at] h:mm A') + ' (Central European Time)'
+}
+
 const getEnvironment = () => process.env.NODE_ENV
 const isDevelopment = () => process.env.NODE_ENV === 'development'
 const isProduction = () => process.env.NODE_ENV === 'production'
@@ -143,11 +142,11 @@ export default {
     getPasswordForServer,
     getServerNameForMatch,
     getEnvironment,
-    isDevelopmentGuild,
     isDevelopment,
     isProduction,
     includes,
     prettifyMapName,
     getStreams,
-    fetchServersStatus
+    fetchServersStatus,
+    getHumanSpecificFormattedDate
 }

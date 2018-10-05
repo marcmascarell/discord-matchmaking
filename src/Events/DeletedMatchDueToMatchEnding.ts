@@ -1,11 +1,11 @@
 import DeletedMatch from './DeletedMatch'
 import DestroyMatchServer from '../Listeners/DestroyMatchServer'
-import DeleteVoiceChannels from '../Listeners/DeleteVoiceChannels'
+import DeleteMatchVoiceChannels from '../Listeners/DeleteMatchVoiceChannels'
 import Match from "../Models/Match"
 
 export default class DeletedMatchDueToMatchEnding extends DeletedMatch {
     constructor(match : Match) {
-        match.getChannel().send(`Match #${match.id} finished...`)
+        match.sendToChannel(`Match #${match.id} finished...`)
 
         super({match})
     }
@@ -13,7 +13,7 @@ export default class DeletedMatchDueToMatchEnding extends DeletedMatch {
     get listeners() : Array<any> {
         return [
             DestroyMatchServer,
-            DeleteVoiceChannels
+            DeleteMatchVoiceChannels
         ]
     }
 };
