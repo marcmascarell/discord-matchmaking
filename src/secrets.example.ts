@@ -1,11 +1,11 @@
 const secrets = {
     logCommands: true,
-    passwordSalt: '',
-    rconSalt: '',
-    discordOwner: '',
-    discordToken: '',
-    digitalOceanToken: '',
-    jsonStore: '',
+    passwordSalt: "",
+    rconSalt: "",
+    discordOwner: "",
+    discordToken: "",
+    digitalOceanToken: "",
+    jsonStore: "",
     discordAdmins: [],
     discordModerators: [],
     publicServers: [],
@@ -13,11 +13,11 @@ const secrets = {
     // The production bot should answer or not
     guilds: {
         development: [
-            '' // guild id
-        ]
+            "", // guild id
+        ],
     },
 
-    firebase: {}
+    firebase: {},
 }
 
 export default secrets

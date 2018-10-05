@@ -1,4 +1,4 @@
-import Model from './BaseModel'
+import Model from "./BaseModel"
 
 export default class LogUserActivity extends Model {
     public id: number // Discord ids are strings
@@ -8,6 +8,6 @@ export default class LogUserActivity extends Model {
     public createdAt: string
 
     static get tableName() {
-        return 'log_users_activity';
+        return "log_users_activity"
     }
 }
