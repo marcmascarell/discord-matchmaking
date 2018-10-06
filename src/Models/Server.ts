@@ -113,36 +113,42 @@ export default class Server extends Model {
                     .where("status", "==", "online")
                     .onSnapshot(
                         async docSnapshot => {
-                            if (!docSnapshot.empty) {
-                                const server = docSnapshot.docs[0].data()
-
-                                const createdServer = await Server.query()
-                                    .update({
-                                        ip: server.ip,
-                                        password: server.password,
-                                        rcon: server.rcon,
-                                        slots: server.slots,
-                                        provisioned_at: moment().format(
-                                            "YYYY-MM-DD HH:mm:ss",
-                                        ),
-                                        status: Server.STATUS_CREATED,
-                                        destroy_at: moment()
-                                            .add("1", "hour")
-                                            .add("15", "minutes")
-                                            .format("YYYY-MM-DD HH:mm:ss"),
-                                    })
-                                    .where("id", server.id)
-
-                                console.log("createdServer", createdServer)
-
-                                const matchWithServer = await Match.getFullMatchById(
-                                    match.id,
-                                )
-
-                                new ServerCreated({
-                                    match: matchWithServer,
-                                })
+                            if (docSnapshot.empty) {
+                                return
                             }
+
+                            const server = docSnapshot.docs[0].data()
+
+                            const serverUpdated = await Server.query()
+                                .update({
+                                    ip: server.ip,
+                                    password: server.password,
+                                    rcon: server.rcon,
+                                    slots: server.slots,
+                                    provisioned_at: moment().format(
+                                        "YYYY-MM-DD HH:mm:ss",
+                                    ),
+                                    status: Server.STATUS_CREATED,
+                                    destroy_at: moment()
+                                        .add("1", "hour")
+                                        .add("15", "minutes")
+                                        .format("YYYY-MM-DD HH:mm:ss"),
+                                })
+                                .where("id", server.id)
+
+                            console.log(
+                                `Created Server #${server.id}. For Match #${
+                                    match.id
+                                }`,
+                            )
+
+                            const matchWithServer = await Match.getFullMatchById(
+                                match.id,
+                            )
+
+                            new ServerCreated({
+                                match: matchWithServer,
+                            })
                         },
                         err => {
                             console.log(`Encountered error: ${err}`)

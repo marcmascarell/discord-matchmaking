@@ -116,14 +116,13 @@ const create = (
     })
 }
 
-const getServerTag = () => {
-    // Avoid dev environment from interfere official servers
-    return utils.isDevelopment() ? `test-codserver` : `codserver`
-}
+// Avoid dev environment from interfere official servers
+const getServerTag = () =>
+    utils.isDevelopment() ? `test-codserver` : `codserver`
 
 const destroy = (match: Match) => {
-    console.log("server to destroy", match.server)
-    console.log("from match", match)
+    console.log("Server to destroy", match.server)
+    console.log("From match", match)
     return new Promise((resolve, reject) => {
         if (match.server.ip === null) {
             console.log('"Destroying" test server, avoided DO call')

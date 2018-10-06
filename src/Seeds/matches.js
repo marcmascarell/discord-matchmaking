@@ -107,7 +107,7 @@ exports.seed = function(knex, Promise) {
                     guild_id: "439806672911859713",
                     channel_id: "439806672911859717",
                 },
-                // Future scheduled match
+                // Not filled future scheduled match
                 {
                     id: 7,
                     max_players: 2,
@@ -115,6 +115,24 @@ exports.seed = function(knex, Promise) {
                         .add(15, "minutes")
                         .format("YYYY-MM-DD HH:mm:ss"),
                     name: "Scheduled match",
+                    server_id: null,
+                    created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
+
+                    last_activity_at: moment().format("YYYY-MM-DD HH:mm:ss"),
+                    canceled_reason: null,
+                    maps: "random",
+
+                    guild_id: "439806672911859713",
+                    channel_id: "439806672911859717",
+                },
+                // Filled future scheduled match, server should be created
+                {
+                    id: 8,
+                    max_players: 2,
+                    scheduled_at: moment()
+                        .add(5, "minutes")
+                        .format("YYYY-MM-DD HH:mm:ss"),
+                    name: "Filled scheduled match",
                     server_id: null,
                     created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
 

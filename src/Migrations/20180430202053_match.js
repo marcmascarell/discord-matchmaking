@@ -21,14 +21,14 @@ exports.up = function(knex, Promise) {
         table.string("guild_id") // Discord's Guild where the `channel_id` is
         table.string("channel_id") // Discord's Text Channel where the match originated
 
-        table.string("canceled_reason").nullable()
-
         table.timestamps()
 
         // Players joined
         table.dateTime("last_activity_at").nullable()
 
         table.dateTime("scheduled_at").nullable()
+
+        table.string("canceled_reason").nullable()
 
         table.dateTime("deleted_at").nullable()
     })
