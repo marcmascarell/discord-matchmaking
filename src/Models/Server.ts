@@ -1,8 +1,10 @@
-const moment = require("moment")
 import Model from "./BaseModel"
 import Match from "./Match"
 import User from "./User"
+import ServerCreated from "../Events/ServerCreated"
 import gameServerManager from "../Server/gameServerManager"
+import firestore from "../firestore"
+import moment from "moment"
 
 export default class Server extends Model {
     public id: number
@@ -51,6 +53,12 @@ export default class Server extends Model {
             return
         }
 
+        await Server.query()
+            .where("id", match.server.id)
+            .update({
+                status: Server.STATUS_DESTROYING,
+            })
+
         return gameServerManager
             .destroy(match)
             .then(() => {
@@ -58,7 +66,7 @@ export default class Server extends Model {
                     .where("id", match.server.id)
                     .update({
                         destroyed_at: moment().format("YYYY-MM-DD HH:mm:ss"),
-                        status: "destroyed",
+                        status: Server.STATUS_DESTROYED,
                     })
             })
             .catch((e: Error) => {
@@ -70,5 +78,81 @@ export default class Server extends Model {
         return Match.query()
             .eager("[server.providedBy]")
             .findOne("server_id", this.id)
+    }
+
+    static async createForMatch(match) {
+        const serverName = match.getServerName()
+
+        console.log(`Creating server for match #${match.id} (${serverName})...`)
+
+        const server = await Server.query().insertGraph({
+            name: serverName,
+            creation_request_at: moment().format("YYYY-MM-DD HH:mm:ss"),
+            status: Server.STATUS_CREATING,
+        })
+
+        await Match.query()
+            .update({
+                server_id: server.id,
+            })
+            .where("id", match.id)
+
+        return gameServerManager
+            .create(serverName, {
+                id: match.id,
+                maps: match.maps.split(","),
+                slots: match.maxPlayers + 2,
+            })
+            .then(() => {
+                const gameServersCollection = firestore
+                    .getClient()
+                    .collection("gameservers")
+
+                gameServersCollection
+                    .where("name", "==", serverName) // server name allows us to distinguish between dev/prod
+                    .where("status", "==", "online")
+                    .onSnapshot(
+                        async docSnapshot => {
+                            if (!docSnapshot.empty) {
+                                const server = docSnapshot.docs[0].data()
+
+                                const createdServer = await Server.query()
+                                    .update({
+                                        ip: server.ip,
+                                        password: server.password,
+                                        rcon: server.rcon,
+                                        slots: server.slots,
+                                        provisioned_at: moment().format(
+                                            "YYYY-MM-DD HH:mm:ss",
+                                        ),
+                                        status: Server.STATUS_CREATED,
+                                        destroy_at: moment()
+                                            .add("1", "hour")
+                                            .add("15", "minutes")
+                                            .format("YYYY-MM-DD HH:mm:ss"),
+                                    })
+                                    .where("id", server.id)
+
+                                console.log("createdServer", createdServer)
+
+                                const matchWithServer = await Match.getFullMatchById(
+                                    match.id,
+                                )
+
+                                new ServerCreated({
+                                    match: matchWithServer,
+                                })
+                            }
+                        },
+                        err => {
+                            console.log(`Encountered error: ${err}`)
+                        },
+                    )
+            })
+            .catch(e => {
+                console.log("Error server creation", e)
+
+                throw e
+            })
     }
 }
