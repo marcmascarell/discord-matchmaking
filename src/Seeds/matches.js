@@ -30,7 +30,7 @@ exports.seed = function(knex, Promise) {
                     last_activity_at: moment()
                         .subtract(3, "hour")
                         .format("YYYY-MM-DD HH:mm:ss"),
-                    maps: "random",
+                    maps: "harbor",
                     guild_id: "439806672911859713",
                     channel_id: "439806672911859717",
                 },
@@ -47,7 +47,7 @@ exports.seed = function(knex, Promise) {
                     last_activity_at: moment()
                         .subtract(14, "minutes")
                         .format("YYYY-MM-DD HH:mm:ss"),
-                    maps: "random",
+                    maps: "harbor",
                     guild_id: "439806672911859713",
                     channel_id: "439806672911859717",
                 },
@@ -65,7 +65,7 @@ exports.seed = function(knex, Promise) {
                         .subtract(16, "minutes")
                         .format("YYYY-MM-DD HH:mm:ss"),
                     canceled_reason: "INACTIVITY",
-                    maps: "random",
+                    maps: "harbor",
                     guild_id: "439806672911859713",
                     channel_id: "439806672911859717",
                 },
@@ -83,7 +83,7 @@ exports.seed = function(knex, Promise) {
                         .subtract(16, "minutes")
                         .format("YYYY-MM-DD HH:mm:ss"),
                     canceled_reason: null,
-                    maps: "random",
+                    maps: "harbor",
 
                     guild_id: "439806672911859713",
                     channel_id: "439806672911859717",
@@ -102,7 +102,7 @@ exports.seed = function(knex, Promise) {
                     // It was already canceled
                     last_activity_at: moment().format("YYYY-MM-DD HH:mm:ss"),
                     canceled_reason: null,
-                    maps: "random",
+                    maps: "harbor",
 
                     guild_id: "439806672911859713",
                     channel_id: "439806672911859717",
@@ -120,7 +120,7 @@ exports.seed = function(knex, Promise) {
 
                     last_activity_at: moment().format("YYYY-MM-DD HH:mm:ss"),
                     canceled_reason: null,
-                    maps: "random",
+                    maps: "harbor",
 
                     guild_id: "439806672911859713",
                     channel_id: "439806672911859717",
@@ -138,7 +138,7 @@ exports.seed = function(knex, Promise) {
 
                     last_activity_at: moment().format("YYYY-MM-DD HH:mm:ss"),
                     canceled_reason: null,
-                    maps: "random",
+                    maps: "harbor",
 
                     guild_id: "439806672911859713",
                     channel_id: "439806672911859717",

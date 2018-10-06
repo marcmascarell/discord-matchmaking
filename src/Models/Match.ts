@@ -125,7 +125,7 @@ export default class Match extends Model {
             return false
         }
 
-        return this.server.status === "online"
+        return this.server.status === Server.STATUS_ONLINE
     }
 
     playerNames(): string[] {
