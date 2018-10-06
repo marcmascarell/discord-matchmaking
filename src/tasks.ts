@@ -133,14 +133,41 @@ const lookForDestroyableServers = () => {
 }
 
 const prepareScheduledMatchesServers = () => {
-    Match.getRecentMatchesQuery().whereNotNull("scheduled_at")
+    Match.getRecentMatchesQuery()
+        .whereNull("canceled_reason") // Not already canceled
+        .whereNull("server_id")
+        .whereNotNull("scheduled_at")
+        .where(
+            "scheduled_at",
+            ">",
+            moment()
+                .subtract("5", "minutes")
+                .format("YYYY-MM-DD HH:mm:ss"),
+        )
+        .then(matches => {
+            console.log("prepareScheduledMatchesServers", matches)
+            matches.forEach(async (match: Match) => {
+                if (!match.isFull()) {
+                    console.log(
+                        "Preventing scheduled match server creation: Match is not full",
+                        match,
+                    )
+
+                    return
+                }
+
+                console.log("Creating server for scheduled match", match)
+
+                Server.createForMatch(match)
+            })
+        })
 }
 
 const cancelNonStartedInactiveMatches = () => {
     Match.getRecentMatchesQuery()
-        .where("canceled_reason", null) // Not already canceled
+        .whereNull("canceled_reason") // Not already canceled
         .whereNull("scheduled_at") // Non scheduled match
-        .where("server_id", null) // The match did not start
+        .whereNull("server_id") // The match did not start
         .where(
             "last_activity_at",
             "<",
@@ -162,23 +189,29 @@ const cancelNonStartedInactiveMatches = () => {
 const cancelNotFullFilledScheduledMatches = () => {
     // Cancel matches that
     Match.getRecentMatchesQuery()
-        .where("canceled_reason", null) // Not already canceled
+        .whereNull("canceled_reason") // Not already canceled
         .whereNotNull("scheduled_at") // Scheduled match
+        .whereNull("server_id")
         .where("scheduled_at", "<", moment().format("YYYY-MM-DD HH:mm:ss"))
         .then(matches => {
-            if (matches.length) {
-                console.log(
-                    "Canceling matches SCHEDULED_MATCH_NOT_FULLFILLED",
-                    matches,
-                )
-            }
-
             matches.forEach(match => {
-                if (!match.isFull()) {
-                    match.cancel(
-                        Match.REMOVAL_REASONS.SCHEDULED_MATCH_NOT_FULLFILLED,
+                if (match.isFull()) {
+                    console.log(
+                        "Preventing scheduled match from being cancelled: Match is full",
+                        match,
                     )
+
+                    return
                 }
+
+                console.log(
+                    "Canceling match SCHEDULED_MATCH_NOT_FULLFILLED",
+                    match,
+                )
+
+                match.cancel(
+                    Match.REMOVAL_REASONS.SCHEDULED_MATCH_NOT_FULLFILLED,
+                )
             })
         })
 }

@@ -12,6 +12,10 @@ const getClient = () => {
 
     db = firebase.firestore()
 
+    db.settings({
+        timestampsInSnapshots: true,
+    })
+
     return db
 }
 

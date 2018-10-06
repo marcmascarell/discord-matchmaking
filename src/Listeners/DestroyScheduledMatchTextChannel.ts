@@ -13,6 +13,15 @@ export default class DestroyScheduledMatchTextChannel extends Listener {
         }
 
         const channel = await discordUtils.getScheduledTextChannel(match)
-        channel.delete("This channel has been terminated")
+
+        if (!channel) {
+            return console.log(
+                `Unable to destroy text channel. Couldn't find scheduled match text channel for: #${
+                    match.id
+                }`,
+            )
+        }
+
+        channel.delete("This channel has been destroyed")
     }
 }
