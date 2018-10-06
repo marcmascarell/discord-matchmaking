@@ -22,7 +22,7 @@ export default class Server extends Model {
     public provisioned_at: string
 
     static readonly STATUS_CREATING = "creating"
-    static readonly STATUS_CREATED = "created"
+    static readonly STATUS_ONLINE = "online"
     static readonly STATUS_DESTROYING = "destroying"
     static readonly STATUS_DESTROYED = "destroyed"
 
@@ -103,32 +103,33 @@ export default class Server extends Model {
                 maps: match.maps.split(","),
                 slots: match.maxPlayers + 2,
             })
-            .then(() => {
+            .then(async () => {
                 const gameServersCollection = firestore
                     .getClient()
                     .collection("gameservers")
 
                 gameServersCollection
                     .where("name", "==", serverName) // server name allows us to distinguish between dev/prod
-                    .where("status", "==", "online")
+                    .where("status", "==", Server.STATUS_ONLINE) // Set by the provisioning script
                     .onSnapshot(
                         async docSnapshot => {
                             if (docSnapshot.empty) {
                                 return
                             }
 
-                            const server = docSnapshot.docs[0].data()
+                            // Be careful, some data (like id) does not reflect Server but Match
+                            const provisionedMatchServer = docSnapshot.docs[0].data()
 
-                            const serverUpdated = await Server.query()
+                            await Server.query()
                                 .update({
-                                    ip: server.ip,
-                                    password: server.password,
-                                    rcon: server.rcon,
-                                    slots: server.slots,
+                                    ip: provisionedMatchServer.ip,
+                                    password: provisionedMatchServer.password,
+                                    rcon: provisionedMatchServer.rcon,
+                                    slots: provisionedMatchServer.slots,
                                     provisioned_at: moment().format(
                                         "YYYY-MM-DD HH:mm:ss",
                                     ),
-                                    status: Server.STATUS_CREATED,
+                                    status: Server.STATUS_ONLINE,
                                     destroy_at: moment()
                                         .add("1", "hour")
                                         .add("15", "minutes")
