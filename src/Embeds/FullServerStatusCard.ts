@@ -5,7 +5,7 @@ const _ = require("lodash")
 
 const Discord = require("discord.js")
 
-export default class ServerStatusCard {
+export default class FullServerStatusCard {
     private serverStatus: any
 
     constructor(serverStatus: any) {
@@ -16,6 +16,7 @@ export default class ServerStatusCard {
 
     render(): RichEmbed {
         let footer = ""
+
         const playersSortedByFrags = _.sortBy(
             this.serverStatus.players,
             "frags",
