@@ -1,44 +1,64 @@
-import {CommandMessage, CommandoClient} from "discord.js-commando"
+import { CommandMessage, CommandoClient } from "discord.js-commando"
 
-import BaseCommand from '../BaseCommand'
+import BaseCommand from "../BaseCommand"
 import utils from "../../Utilities/utils"
-import {GuildResolvable} from "discord.js"
-import ServerStatusCard from "../../Embeds/ServerStatusCard"
+import FullServerStatusCard from "../../Embeds/FullServerStatusCard"
 import secrets from "../../secrets"
+import MinimalServersStatusCard from "../../Embeds/MinimalServersStatusCard"
 
 export default class PubCommand extends BaseCommand {
+    public guildOnly: boolean = false
 
-    public guildOnly: boolean = false;
-
-    constructor(client : CommandoClient) {
+    constructor(client: CommandoClient) {
         super(client, {
-            name: 'pub',
-            memberName: 'pub',
-            description: 'Public servers status.',
-            group: 'misc',
-            aliases: [
-                'pubs',
-                'public',
-                'publics',
-            ]
-        });
+            name: "pub",
+            memberName: "pub",
+            description: "Public servers status.",
+            group: "misc",
+            aliases: ["pubs", "public", "publics"],
+            args: [
+                {
+                    key: "id",
+                    label: "Match ID",
+                    prompt: "Match ID",
+                    type: "integer",
+                    default: false,
+                },
+            ],
+        })
     }
 
-    async run(message : CommandMessage) {
+    async run(message: CommandMessage, { id }: { id: number }) {
         const channel = message.channel
 
-        const serversStatus = await utils.fetchServersStatus(secrets.publicServers)
-        const embeds = []
+        let servers = secrets.publicServers
+        let embed
 
-        serversStatus.forEach(gameState => {
-            embeds.push(new ServerStatusCard(gameState).render())
-        })
+        if (typeof id === "string") {
+            id = parseInt(id, 10)
+        }
 
-        embeds.forEach(embed => {
-            channel.send(embed)
-        })
+        if (id) {
+            const server = servers[id - 1]
+            if (!server) {
+                return message.reply("That server doesnt exist!")
+            }
+
+            const serverStatus = await utils.fetchServersStatus([server])
+
+            if (serverStatus.length === 0) {
+                return message.reply("Unable to fetch server info!")
+            }
+
+            embed = new FullServerStatusCard(serverStatus[0]).render()
+        } else {
+            const serversStatus = await utils.fetchServersStatus(servers)
+
+            embed = new MinimalServersStatusCard(serversStatus).render()
+        }
+
+        channel.send(embed)
 
         return Promise.resolve(null)
     }
-
-};
+}
