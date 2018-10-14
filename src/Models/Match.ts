@@ -14,6 +14,7 @@ import MatchCreated from "../Events/MatchCreated"
 import Server from "./Server"
 import User from "./User"
 import MatchPlayers from "./MatchPlayers"
+import { Moment } from "moment"
 
 export default class Match extends Model {
     public id: number
@@ -23,7 +24,8 @@ export default class Match extends Model {
     public maps: string
     public guildId: string
     public channelId: string
-    public canceled_reason: string
+    public serverId: number
+    public deleted_reason: string
     public server: Server
     public deleted_at: string
     public scheduledAt: string
@@ -112,7 +114,7 @@ export default class Match extends Model {
 
         return Match.query()
             .update({
-                canceled_reason: reason,
+                deleted_reason: reason,
                 deleted_at: moment().format("YYYY-MM-DD HH:mm:ss"),
             })
             .where("id", this.id)
@@ -126,6 +128,10 @@ export default class Match extends Model {
         }
 
         return this.server.status === Server.STATUS_ONLINE
+    }
+
+    hasServerAssigned() {
+        return this.serverId !== null
     }
 
     playerNames(): string[] {
@@ -159,6 +165,40 @@ export default class Match extends Model {
         return this.maxPlayers / 2
     }
 
+    // If a match collides will return the match
+    static async hasCollidingMatch(discordId, wantsToPlayAt?: any) {
+        const userWithMatches = await User.getNotEndedMatches(discordId)
+
+        if (userWithMatches.matches.length === 0) {
+            return false
+        }
+
+        // if the match is not scheduled look if the player is already in a non scheduled match
+        if (!wantsToPlayAt) {
+            const alreadyHasMatch = userWithMatches.matches.find(match => {
+                return match.scheduledAt === null
+            })
+
+            if (alreadyHasMatch) {
+                return alreadyHasMatch
+            }
+        }
+
+        wantsToPlayAt = moment(wantsToPlayAt) || moment()
+
+        // Look in scheduled matches to see if there is one that collides
+        const foundCollidingMatch = userWithMatches.matches
+            .filter(match => match.scheduledAt) // Ignore non scheduled
+            .find(match => {
+                return wantsToPlayAt.isBetween(
+                    moment(match.scheduledAt).subtract("60", "minutes"),
+                    moment(match.scheduledAt).add("60", "minutes"),
+                )
+            })
+
+        return foundCollidingMatch || null
+    }
+
     static isPlayerInMatch(match: Match, player: { id: string }): boolean {
         return utils.includes(match.playerDiscordIds(), player.id)
     }
@@ -173,8 +213,15 @@ export default class Match extends Model {
             .eager("[server.providedBy, players]")
     }
 
+    static getJoinableMatchesQuery() {
+        return Match.query()
+            .eager("[server.providedBy, players]")
+            .whereNull("deleted_reason")
+    }
+
+    // Returned matches can be full
     static getWaitingForPlayers() {
-        return Match.getRecentMatchesQuery().then(matches =>
+        return Match.getJoinableMatchesQuery().then(matches =>
             matches.filter(match => match.isWaitingForPlayers()),
         )
     }

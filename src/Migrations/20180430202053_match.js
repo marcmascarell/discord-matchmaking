@@ -28,7 +28,7 @@ exports.up = function(knex, Promise) {
 
         table.dateTime("scheduled_at").nullable()
 
-        table.string("canceled_reason").nullable()
+        table.string("deleted_reason").nullable()
 
         table.dateTime("deleted_at").nullable()
     })

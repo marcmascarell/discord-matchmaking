@@ -38,16 +38,13 @@ export default class MatchCommand extends BaseCommand {
     ) {
         const player = message.author
         const channel = message.channel
-        const matchesWaitingForPlayers = await Match.getWaitingForPlayers()
-        const playerInMatch = Match.isPlayerInMatches(
-            matchesWaitingForPlayers,
-            player,
-        )
 
-        if (playerInMatch) {
+        const collidingMatch = await Match.hasCollidingMatch(player.id)
+
+        if (collidingMatch) {
             return message.reply(
-                "You are already in a match (" +
-                    playerInMatch.id +
+                "You are in a match that collides with the one you want to join (" +
+                    collidingMatch.id +
                     ")! To leave write `!leave` to leave or `!list` to see all matches",
             )
         }

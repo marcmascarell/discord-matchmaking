@@ -3,7 +3,7 @@ import bot from "../bot"
 import Match from "../Models/Match"
 import utils from "../Utilities/utils"
 import { Guild, GuildMember } from "discord.js"
-import MatchCard from "../Embeds/MatchCard"
+import FullMatchCard from "../Embeds/FullMatchCard"
 
 export default class SendServerInfoToPlayers extends Listener {
     async handle({ match }: { match: Match }) {
@@ -29,7 +29,7 @@ export default class SendServerInfoToPlayers extends Listener {
                 return utils.includes(playerDiscordIds, member.user.id)
             })
 
-        const embed = new MatchCard(match).render()
+        const embed = new FullMatchCard(match).render()
 
         embed.setColor("#37b600")
         embed.setTitle(`Your match is ready!`)

@@ -1,10 +1,10 @@
 import Listener from "./Listener"
-import MatchCard from "../Embeds/MatchCard"
+import FullMatchCard from "../Embeds/FullMatchCard"
 import Match from "../Models/Match"
 
 export default class NotifyNewMatch extends Listener {
     handle({ match }: { match: Match }) {
-        const embed = new MatchCard(match).render()
+        const embed = new FullMatchCard(match).render()
 
         if (match.scheduledAt) {
             embed.setTitle(`New scheduled match created`)

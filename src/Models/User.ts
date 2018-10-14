@@ -1,4 +1,7 @@
 import Model from "./BaseModel"
+import Server from "./Server"
+import MatchPlayers from "./MatchPlayers"
+import Match from "./Match"
 
 export default class User extends Model {
     public id: number
@@ -12,12 +15,27 @@ export default class User extends Model {
     public discordDiscriminator: string
     public discordAvatar: string
 
+    public matches: Array<Match> | null
+
     static get virtualAttributes() {
         return ["username"]
     }
 
     username(): string {
         return this.discordUsername
+    }
+
+    static async getNotEndedMatches(discordId) {
+        const user = await this.findByDiscordId(discordId)
+
+        return this.query()
+            .eager("matches")
+            .modifyEager("matches", builder => {
+                // Only select pets older than 10 years old for children.
+                builder.whereNull("deleted_reason")
+            })
+            .where("id", user.id)
+            .first()
     }
 
     static get tableName() {
@@ -54,5 +72,22 @@ export default class User extends Model {
                 noDelete: true,
             },
         )
+    }
+
+    static relationMappings() {
+        return {
+            matches: {
+                relation: Model.ManyToManyRelation,
+                modelClass: Match,
+                join: {
+                    from: "users.id",
+                    through: {
+                        from: "match_players.user_id",
+                        to: "match_players.match_id",
+                    },
+                    to: "matches.id",
+                },
+            },
+        }
     }
 }

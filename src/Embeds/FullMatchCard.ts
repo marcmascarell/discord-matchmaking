@@ -5,7 +5,7 @@ import utils from "../Utilities/utils"
 
 const Discord = require("discord.js")
 
-export default class MatchCard {
+export default class FullMatchCard {
     private match: Match
 
     constructor(match: Match) {
@@ -43,6 +43,8 @@ export default class MatchCard {
         }
 
         if (match.scheduledAt) {
+            embed.setTitle(`📅 Scheduled match`)
+            embed.setColor("#00b5b6")
             embed.addField(
                 `Scheduled for`,
                 `${utils.getHumanSpecificFormattedDate(match.scheduledAt)}`,

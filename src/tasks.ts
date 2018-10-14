@@ -4,7 +4,7 @@ import LogUserActivity from "./Models/LogUserActivity"
 import bot from "./bot"
 import NotifyStreams from "./Listeners/NotifyStreams"
 import utils from "./Utilities/utils"
-import ServerStatusCard from "./Embeds/ServerStatusCard"
+import FullServerStatusCard from "./Embeds/FullServerStatusCard"
 import secrets from "./secrets"
 const Gamedig = require("gamedig")
 import LogProcessedActivity from "./Models/LogProcessedActivity"
@@ -12,38 +12,43 @@ import User from "./Models/User"
 const moment = require("moment")
 const _ = require("lodash")
 
+import scheduler from "node-schedule"
+import PrepareScheduledMatchesServers from "./Tasks/PrepareScheduledMatchesServers"
+
 let lastPublicServersNotification
 
 /**
  * Tasks to perform. Checked every minute
  */
 const init = () => {
-    const fiveSeconds = 5000
-    const oneMinute = 60000
-    const threeMinutes = 180000
-    const fifteenMinutes = 900000
-    const oneDay = 86400000
+    const eachFiveSeconds = "*/5 * * * * *"
+    const eachMinute = "0 */5 * * * *"
+    const eachThreeMinutes = "0 */3 * * * *"
+    const eachFifteenMinutes = "0 */15 * * * *"
+    const eachDay = "0 0 0 * * *"
 
-    setInterval(async () => {
-        // console.log('Tasks running...')
+    new PrepareScheduledMatchesServers().autoSchedule()
+
+    // Todo: clean up command to clean unused voice match channels
+
+    scheduler.scheduleJob(eachMinute, () => {
         lookForDestroyableServers()
         cancelNonStartedInactiveMatches()
         cancelNotFullFilledScheduledMatches()
-        prepareScheduledMatchesServers()
-    }, oneMinute)
+    })
 
-    setInterval(async () => {
+    scheduler.scheduleJob(eachThreeMinutes, () => {
         logUsersActivity()
         lookForNewStreams()
-    }, threeMinutes)
+    })
 
-    setInterval(async () => {
+    scheduler.scheduleJob(eachFifteenMinutes, () => {
         monitorPublicServers()
-    }, fifteenMinutes)
+    })
 
-    setInterval(() => {
+    scheduler.scheduleJob(eachDay, () => {
         processActivity()
-    }, oneDay)
+    })
 }
 
 const monitorPublicServers = async () => {
@@ -58,7 +63,7 @@ const monitorPublicServers = async () => {
     serversStatus
         .filter(serverStatus => serverStatus.players.length >= 14)
         .forEach(gameState => {
-            embeds.push(new ServerStatusCard(gameState).render())
+            embeds.push(new FullServerStatusCard(gameState).render())
         })
 
     if (
@@ -132,40 +137,9 @@ const lookForDestroyableServers = () => {
         })
 }
 
-const prepareScheduledMatchesServers = () => {
-    Match.getRecentMatchesQuery()
-        .whereNull("canceled_reason") // Not already canceled
-        .whereNull("server_id")
-        .whereNotNull("scheduled_at")
-        .where(
-            "scheduled_at",
-            ">",
-            moment()
-                .subtract("5", "minutes")
-                .format("YYYY-MM-DD HH:mm:ss"),
-        )
-        .then(matches => {
-            console.log("prepareScheduledMatchesServers", matches)
-            matches.forEach(async (match: Match) => {
-                if (!match.isFull()) {
-                    console.log(
-                        "Preventing scheduled match server creation: Match is not full",
-                        match,
-                    )
-
-                    return
-                }
-
-                console.log("Creating server for scheduled match", match)
-
-                Server.createForMatch(match)
-            })
-        })
-}
-
 const cancelNonStartedInactiveMatches = () => {
     Match.getRecentMatchesQuery()
-        .whereNull("canceled_reason") // Not already canceled
+        .whereNull("deleted_reason") // Not already canceled
         .whereNull("scheduled_at") // Non scheduled match
         .whereNull("server_id") // The match did not start
         .where(
@@ -188,8 +162,8 @@ const cancelNonStartedInactiveMatches = () => {
 
 const cancelNotFullFilledScheduledMatches = () => {
     // Cancel matches that
-    Match.getRecentMatchesQuery()
-        .whereNull("canceled_reason") // Not already canceled
+    Match.query()
+        .whereNull("deleted_reason") // Not already canceled
         .whereNotNull("scheduled_at") // Scheduled match
         .whereNull("server_id")
         .where("scheduled_at", "<", moment().format("YYYY-MM-DD HH:mm:ss"))
@@ -217,10 +191,6 @@ const cancelNotFullFilledScheduledMatches = () => {
 }
 
 const logUsersActivity = async () => {
-    if (!bot.isReady()) {
-        return
-    }
-
     const onlineUsers = await bot.getClient().users.filter(user => {
         return user.bot === false && user.presence.status !== "offline"
     })

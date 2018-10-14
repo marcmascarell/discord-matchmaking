@@ -11,7 +11,7 @@ exports.seed = function(knex, Promise) {
                     id: 1,
                     name: "The first match",
                     max_players: 4,
-                    server_id: 1,
+                    server_id: null,
                     created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
                     last_activity_at: moment().format("YYYY-MM-DD HH:mm:ss"),
                     guild_id: "439806672911859713",
@@ -64,7 +64,7 @@ exports.seed = function(knex, Promise) {
                     last_activity_at: moment()
                         .subtract(16, "minutes")
                         .format("YYYY-MM-DD HH:mm:ss"),
-                    canceled_reason: "INACTIVITY",
+                    deleted_reason: "INACTIVITY",
                     maps: "harbor",
                     guild_id: "439806672911859713",
                     channel_id: "439806672911859717",
@@ -82,7 +82,7 @@ exports.seed = function(knex, Promise) {
                     last_activity_at: moment()
                         .subtract(16, "minutes")
                         .format("YYYY-MM-DD HH:mm:ss"),
-                    canceled_reason: null,
+                    deleted_reason: null,
                     maps: "harbor",
 
                     guild_id: "439806672911859713",
@@ -101,7 +101,7 @@ exports.seed = function(knex, Promise) {
 
                     // It was already canceled
                     last_activity_at: moment().format("YYYY-MM-DD HH:mm:ss"),
-                    canceled_reason: null,
+                    deleted_reason: null,
                     maps: "harbor",
 
                     guild_id: "439806672911859713",
@@ -119,7 +119,7 @@ exports.seed = function(knex, Promise) {
                     created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
 
                     last_activity_at: moment().format("YYYY-MM-DD HH:mm:ss"),
-                    canceled_reason: null,
+                    deleted_reason: null,
                     maps: "harbor",
 
                     guild_id: "439806672911859713",
@@ -137,7 +137,27 @@ exports.seed = function(knex, Promise) {
                     created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
 
                     last_activity_at: moment().format("YYYY-MM-DD HH:mm:ss"),
-                    canceled_reason: null,
+                    deleted_reason: null,
+                    maps: "harbor",
+
+                    guild_id: "439806672911859713",
+                    channel_id: "439806672911859717",
+                },
+                // Not filled FAR FUTURE scheduled match
+                {
+                    id: 9,
+                    max_players: 2,
+                    scheduled_at: moment()
+                        .add(2, "days")
+                        .format("YYYY-MM-DD HH:mm:ss"),
+                    name: "Scheduled match",
+                    server_id: null,
+                    created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
+
+                    last_activity_at: moment()
+                        .subtract("1", "day")
+                        .format("YYYY-MM-DD HH:mm:ss"),
+                    deleted_reason: null,
                     maps: "harbor",
 
                     guild_id: "439806672911859713",
