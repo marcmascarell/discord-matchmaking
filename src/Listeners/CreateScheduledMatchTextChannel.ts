@@ -1,5 +1,5 @@
 import Listener from "./Listener"
-import MatchCard from "../Embeds/MatchCard"
+import FullMatchCard from "../Embeds/FullMatchCard"
 import Match from "../Models/Match"
 import discordUtils from "../Utilities/discordUtils"
 import { Client } from "discord.js"
@@ -12,9 +12,7 @@ export default class CreateScheduledMatchTextChannel extends Listener {
             return
         }
 
-        const embed = new MatchCard(match).render()
-
-        embed.setTitle(`Scheduled match`)
+        const embed = new FullMatchCard(match).render()
 
         const dayDate = moment(match.scheduledAt).format("M-D-YY")
         const hourDate = moment(match.scheduledAt).format("H-mm")
@@ -43,8 +41,6 @@ export default class CreateScheduledMatchTextChannel extends Listener {
                 userLimit,
             },
         )
-
-        embed.setColor("#00b5b6")
 
         channel.send(embed)
     }

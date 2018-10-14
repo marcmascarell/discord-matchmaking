@@ -3,8 +3,8 @@ import bot from "./bot"
 import tasks from "./tasks"
 
 database.init()
-bot.init()
-tasks.init()
+
+bot.init().then(tasks.init)
 
 const client = bot.getClient()
 client.on("error", e => console.error(e))

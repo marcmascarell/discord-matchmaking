@@ -3,9 +3,9 @@ import Match from "../../Models/Match"
 import MatchReady from "../../Events/MatchReady"
 import BaseCommand from "../BaseCommand"
 import utils from "../../Utilities/utils"
-import { RichEmbed } from "discord.js"
+import { RichEmbed, User } from "discord.js"
 import bot from "../../bot"
-import MatchCard from "../../Embeds/MatchCard"
+import FullMatchCard from "../../Embeds/FullMatchCard"
 import discordUtils from "../../Utilities/discordUtils"
 
 export default class JoinCommand extends BaseCommand {
@@ -47,15 +47,15 @@ export default class JoinCommand extends BaseCommand {
             id = parseInt(id, 10)
         }
 
-        const playerInMatch = Match.isPlayerInMatches(
-            matchesWaitingForPlayers,
-            player,
+        const collidingMatch = await Match.hasCollidingMatch(
+            player.id,
+            match.scheduledAt,
         )
 
-        if (playerInMatch) {
+        if (collidingMatch) {
             return message.reply(
-                "You are already in a match (" +
-                    playerInMatch.id +
+                "You are in a match that collides with the one you want to join (" +
+                    collidingMatch.id +
                     ")! To leave write `!leave` to leave or `!list` to see all matches",
             )
         }
@@ -74,12 +74,17 @@ export default class JoinCommand extends BaseCommand {
         }
 
         if (joinedMatch.isScheduled()) {
-            const embed = new MatchCard(joinedMatch).render()
+            const embed = new FullMatchCard(joinedMatch).render()
 
-            const channel = await discordUtils.getScheduledTextChannel(
-                joinedMatch,
-            )
-            channel.send(embed)
+            try {
+                const channel = await discordUtils.getScheduledTextChannel(
+                    joinedMatch,
+                )
+
+                channel.send(embed)
+            } catch (e) {
+                console.log(e.stack)
+            }
         }
 
         return message.reply(`Joined match ${match.id}`)

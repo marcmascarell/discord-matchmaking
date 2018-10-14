@@ -5,8 +5,9 @@ const path = require("path")
 import secrets from "./secrets"
 import utils from "./Utilities/utils"
 import { Channel, Guild, GuildChannel, TextChannel } from "discord.js"
+import { setInterval } from "timers"
 
-let botReady = false
+let isReady = false
 
 const client = new Commando.Client({
     owner: secrets.discordOwner,
@@ -15,9 +16,19 @@ const client = new Commando.Client({
 
 const getClient = () => client
 
-const isReady = () => botReady
+const whenReady = (): Promise<void> => {
+    return new Promise(resolve => {
+        setInterval(() => {
+            if (!isReady) {
+                return
+            }
 
-const init = () => {
+            resolve()
+        }, 20)
+    })
+}
+
+const init = (): Promise<void> => {
     if (secrets.logCommands) {
         client.on("commandRun", async (command, promise, message, args) => {
             await LogCommand.query().insert({
@@ -35,7 +46,7 @@ const init = () => {
 
     client.on("ready", async () => {
         console.log("BOT is ready.")
-        botReady = true
+        isReady = true
 
         client.user.setActivity("!help", { type: "LISTENING" })
 
@@ -83,6 +94,8 @@ const init = () => {
     })
 
     client.login(secrets.discordToken)
+
+    return whenReady()
 }
 
 const getGuildById = async (guildId): Promise<Guild> => {
@@ -128,5 +141,5 @@ export default {
     getChannelById,
     getCategoryByName,
     getGuildById,
-    isReady,
+    whenReady,
 }

@@ -8,6 +8,7 @@ import {
 import secrets from "../secrets"
 import utils from "./utils"
 import bot from "../bot"
+import CreateScheduledMatchTextChannel from "../Listeners/CreateScheduledMatchTextChannel"
 
 const isDevelopmentGuild = (guild: GuildResolvable) => {
     const id = guild instanceof Guild ? guild.id : guild
@@ -93,12 +94,22 @@ const createVoiceChannel = async (
         type: "voice",
     })
 }
+
 const getScheduledTextChannel = async match => {
     const guild = await bot.getGuildById(match.guildId)
     const category = await bot.getCategoryByName(guild, "scheduled-matches")
-    return await category.children.find(channel =>
+
+    const channel = await category.children.find(channel =>
         channel.name.endsWith(`-${match.id}`),
     )
+
+    if (!channel) {
+        throw Error(
+            `Unable to get scheduled match text channel for match ${match}.`,
+        )
+    }
+
+    return channel
 }
 
 export default {

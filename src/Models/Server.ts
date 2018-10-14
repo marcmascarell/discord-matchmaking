@@ -81,6 +81,15 @@ export default class Server extends Model {
     }
 
     static async createForMatch(match) {
+        if (match.hasServerAssigned()) {
+            console.log(
+                `This match already has server assigned: #${
+                    match.id
+                } - Server #${match.serverId}`,
+            )
+            return
+        }
+
         const serverName = match.getServerName()
 
         console.log(`Creating server for match #${match.id} (${serverName})...`)

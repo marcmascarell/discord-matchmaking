@@ -1,5 +1,5 @@
 import Listener from "./Listener"
-import MatchCard from "../Embeds/MatchCard"
+import FullMatchCard from "../Embeds/FullMatchCard"
 import Match from "../Models/Match"
 import discordUtils from "../Utilities/discordUtils"
 import { Client } from "discord.js"
@@ -12,16 +12,16 @@ export default class DestroyScheduledMatchTextChannel extends Listener {
             return
         }
 
-        const channel = await discordUtils.getScheduledTextChannel(match)
+        try {
+            const channel = await discordUtils.getScheduledTextChannel(match)
 
-        if (!channel) {
+            channel.delete("This channel has been destroyed")
+        } catch (e) {
             return console.log(
                 `Unable to destroy text channel. Couldn't find scheduled match text channel for: #${
                     match.id
                 }`,
             )
         }
-
-        channel.delete("This channel has been destroyed")
     }
 }

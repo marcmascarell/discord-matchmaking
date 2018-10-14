@@ -12,9 +12,13 @@ const getClient = () => {
 
     db = firebase.firestore()
 
-    db.settings({
-        timestampsInSnapshots: true,
-    })
+    try {
+        db.settings({
+            timestampsInSnapshots: true,
+        })
+    } catch (e) {
+        console.log("Can not set firestore settings")
+    }
 
     return db
 }

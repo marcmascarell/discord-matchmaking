@@ -91,6 +91,11 @@ const create = (
                         console.log("Failed to create server in store", e)
                     })
 
+                if (utils.isDevelopment()) {
+                    console.log("Real server creation prevented.")
+                    return
+                }
+
                 digitalOcean.Droplet.create({
                     name: name,
                     region: "fra1",

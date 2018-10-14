@@ -1,7 +1,7 @@
 import Match from "../Models/Match"
 import { DMChannel, GroupDMChannel, TextChannel } from "discord.js"
 
-import MatchCard from "../Embeds/MatchCard"
+import FullMatchCard from "../Embeds/FullMatchCard"
 const _ = require("lodash")
 const Discord = require("discord.js")
 
@@ -24,7 +24,7 @@ export default class ListPendingMatches {
         channel.send(titleEmbed)
 
         _.each(matches, (match: Match) => {
-            channel.send(new MatchCard(match).render())
+            channel.send(new FullMatchCard(match).render())
         })
     }
 }
