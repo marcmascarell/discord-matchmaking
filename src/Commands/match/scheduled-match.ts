@@ -14,7 +14,12 @@ export default class ScheduledMatchCommand extends BaseCommand {
                 "Organize a scheduled match to be played in a near future.",
             group: "match",
             guildOnly: true,
-            aliases: ["future-match"],
+            aliases: [
+                "future-match",
+                "futurematch",
+                "planned-match",
+                "plannedmatch",
+            ],
             args: [
                 {
                     key: "datetime",
@@ -37,15 +42,18 @@ export default class ScheduledMatchCommand extends BaseCommand {
                         if (!isFutureDate) {
                             return "The date must be someday or time in the future"
                         }
-                        const betweenMaxDate = datetime.isBetween(moment(), moment().add(2, 'months'))
 
-                        if (!betweenMaxDate) {
-                            return 'The date must be someday between now and 2 months'
+                        const isBetweenMaxDate = datetime.isBetween(
+                            moment(),
+                            moment().add(2, "months"),
+                        )
+
+                        if (!isBetweenMaxDate) {
+                            return "The date must be someday between now and 2 months"
                         }
 
                         return true
-                    }
-,
+                    },
                 },
                 {
                     key: "players",
@@ -71,12 +79,12 @@ export default class ScheduledMatchCommand extends BaseCommand {
         if (datetime.isValid()) {
             return datetime
         }
-        const alternativeDatetime = moment(string, 'M-D-YYYY HH:mm', true)
+        const alternativeDatetime = moment(string, "M-D-YYYY HH:mm", true)
 
         if (alternativeDatetime.isValid()) {
             return alternativeDatetime
         }
-        const todayTime = moment(string, 'HH:mm', true)
+        const todayTime = moment(string, "HH:mm", true)
 
         if (todayTime.isValid()) {
             return todayTime

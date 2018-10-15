@@ -18,7 +18,7 @@ export default class MatchCommand extends BaseCommand {
                     key: "players",
                     label: "Players",
                     prompt: "How many players? (5 or 5v5 or 5vs5 ... NvsN)",
-                    type: "string",
+                    type: "match-players",
                     wait: 15,
                 },
                 {
