@@ -1,4 +1,4 @@
-import Model from './BaseModel'
+import Model from "./BaseModel"
 
 export default class LogCommand extends Model {
     public id: string // Discord ids are strings
@@ -8,6 +8,6 @@ export default class LogCommand extends Model {
     public discord_guild: string
 
     static get tableName() {
-        return 'log_commands';
+        return "log_commands"
     }
 }
