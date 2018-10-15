@@ -37,9 +37,15 @@ export default class ScheduledMatchCommand extends BaseCommand {
                         if (!isFutureDate) {
                             return "The date must be someday or time in the future"
                         }
+                        const betweenMaxDate = datetime.isBetween(moment(), moment().add(2, 'months'))
+
+                        if (!betweenMaxDate) {
+                            return 'The date must be someday between now and 2 months'
+                        }
 
                         return true
-                    },
+                    }
+,
                 },
                 {
                     key: "players",
@@ -65,8 +71,12 @@ export default class ScheduledMatchCommand extends BaseCommand {
         if (datetime.isValid()) {
             return datetime
         }
+        const alternativeDatetime = moment(string, 'M-D-YYYY HH:mm', true)
 
-        const todayTime = moment(string, "HH:mm", true)
+        if (alternativeDatetime.isValid()) {
+            return alternativeDatetime
+        }
+        const todayTime = moment(string, 'HH:mm', true)
 
         if (todayTime.isValid()) {
             return todayTime
