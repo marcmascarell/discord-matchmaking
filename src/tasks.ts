@@ -163,6 +163,7 @@ const cancelNonStartedInactiveMatches = () => {
 const cancelNotFullFilledScheduledMatches = () => {
     // Cancel matches that
     Match.query()
+        .eager("players")
         .whereNull("deleted_reason") // Not already canceled
         .whereNotNull("scheduled_at") // Scheduled match
         .whereNull("server_id")
