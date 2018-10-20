@@ -1,7 +1,7 @@
 import Match from "../Models/Match"
 import { DMChannel, GroupDMChannel, TextChannel } from "discord.js"
 
-import FullMatchCard from "../Embeds/FullMatchCard"
+import MinimalMatchCard from "../Embeds/MinimalMatchCard"
 const _ = require("lodash")
 const Discord = require("discord.js")
 
@@ -11,20 +11,18 @@ export default class ListPendingMatches {
         channel: TextChannel | DMChannel | GroupDMChannel,
         matches: Match[],
     ) {
-        const titleEmbed = new Discord.RichEmbed()
+        const title =
+            matches.length === 1
+                ? `${matches.length} Match`
+                : `${matches.length} Matches`
 
-        if (matches.length === 1) {
-            titleEmbed.setTitle(`${matches.length} Match`)
-        } else {
-            titleEmbed.setTitle(`${matches.length} Matches`)
-        }
+        const embed = new Discord.RichEmbed()
+        embed.setTitle(title + " waiting for players")
+        embed.setDescription("⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀")
+        embed.setThumbnail(
+            "https://images-ext-2.discordapp.net/external/_F97Sjyd4QGnKB07CQYCcT9tHXkNLB8TFAq2g1ycrW4/https/images.emojiterra.com/twitter/v11/512px/2694.png",
+        )
 
-        titleEmbed.setDescription("Waiting for players")
-
-        channel.send(titleEmbed)
-
-        _.each(matches, (match: Match) => {
-            channel.send(new FullMatchCard(match).render())
-        })
+        channel.send(new MinimalMatchCard(matches, embed).render())
     }
 }

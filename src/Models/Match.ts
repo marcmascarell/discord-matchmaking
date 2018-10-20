@@ -28,6 +28,7 @@ export default class Match extends Model {
     public deleted_reason: string
     public server: Server
     public deleted_at: string
+    public createdAt: string
     public scheduledAt: string
     public scheduled_at: string
     public last_activity_at: string

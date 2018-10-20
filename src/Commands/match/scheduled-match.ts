@@ -19,13 +19,15 @@ export default class ScheduledMatchCommand extends BaseCommand {
                 "futurematch",
                 "planned-match",
                 "plannedmatch",
+                "schedule-match",
+                "plan-match",
             ],
             args: [
                 {
                     key: "datetime",
                     label: "Date & time",
                     prompt:
-                        'Date and time? (Central European Time). Examples: "12-20-2018 21:00" (MM-DD-YYYY hh:mm), "19:30" (later today)',
+                        "Date and time? (Central European Time). \n\nExamples: \n\n12-20-2018 21:00⠀_MM-DD-YYYY hh:mm (24h format)_\n19:30⠀_(later today, 24h format)_\n",
                     type: "string",
                     wait: 30,
                     validate: text => {
