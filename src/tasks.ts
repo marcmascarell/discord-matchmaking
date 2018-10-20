@@ -22,7 +22,7 @@ let lastPublicServersNotification
  */
 const init = () => {
     const eachFiveSeconds = "*/5 * * * * *"
-    const eachMinute = "0 */5 * * * *"
+    const eachMinute = "0 */1 * * * *"
     const eachThreeMinutes = "0 */3 * * * *"
     const eachFifteenMinutes = "0 */15 * * * *"
     const eachDay = "0 0 0 * * *"
