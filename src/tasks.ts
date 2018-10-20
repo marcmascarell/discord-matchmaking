@@ -162,6 +162,7 @@ const cancelNonStartedInactiveMatches = () => {
 
 const cancelNotFullFilledScheduledMatches = () => {
     console.log("Calling: cancelNotFullFilledScheduledMatches")
+    console.log(Match.getFullMatchById(1))
     Match.query()
         .eager("players")
         .whereNull("deleted_reason") // Not already canceled
