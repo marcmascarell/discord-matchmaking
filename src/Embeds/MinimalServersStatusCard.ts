@@ -17,6 +17,7 @@ export default class MinimalServersStatusCard {
     render(): RichEmbed {
         let embed = new Discord.RichEmbed()
             .setTitle("Public servers")
+            .setDescription("⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀")
             .setColor("#9B59B6")
 
         // Save original array index so we can know which id corresponds

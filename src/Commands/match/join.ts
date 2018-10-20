@@ -54,7 +54,7 @@ export default class JoinCommand extends BaseCommand {
 
         if (collidingMatch) {
             return message.reply(
-                "You are in a match that collides with the one you want to join (" +
+                "You are in a match that collides with the one you want to join (Colliding match: " +
                     collidingMatch.id +
                     ")! To leave write `!leave` to leave or `!list` to see all matches",
             )
