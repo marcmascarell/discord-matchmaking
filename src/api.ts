@@ -1,31 +1,31 @@
-import gameServerManager from './Server/gameServerManager'
+import gameServerManager from "./Server/gameServerManager"
 import secrets from "./secrets"
-import database from "./database";
-import LogProcessedActivity from "./Models/LogProcessedActivity";
+import database from "./database"
+import LogProcessedActivity from "./Models/LogProcessedActivity"
 import cors from "cors"
-const moment = require('moment');
+const moment = require("moment")
 
-const express = require('express')
+const express = require("express")
 const app = express()
 const port = 5001
 
 app.use(cors())
-app.options("*" , cors())
+app.options("*", cors())
 
-app.get('/', (request, response) => {
-    response.send('Hello from Express!')
+app.get("/", (request, response) => {
+    response.send("Hello from Express!")
 })
 
-app.post('/api/server/create', function (req, res) {
+app.post("/api/server/create", function(req, res) {
     const token = req.query.token
-    const map = req.query.map || 'carentan'
+    const map = req.query.map || "carentan"
     const slots = req.query.slots || 12
-    const name = req.query.name || `Server-${+ new Date()}`
+    const name = req.query.name || `Server-${+new Date()}`
 
     if (token !== secrets.apiToken) {
-        res.send('Invalid token!')
+        res.send("Invalid token!")
 
-        return;
+        return
     }
 
     gameServerManager.create(name, {
@@ -35,35 +35,36 @@ app.post('/api/server/create', function (req, res) {
 
     res.send({
         creating: name,
-        result: 'ok'
+        result: "ok",
     })
-});
+})
 
-app.get('/api/users/activity', async function (req, res) {
+app.get("/api/users/activity", async function(req, res) {
     const token = req.query.token
     const date = req.query.date
     let momentDate
 
     if (date) {
-        momentDate = moment(date,'DD-MM-YYYY')
-    } else{
+        momentDate = moment(date, "DD-MM-YYYY")
+    } else {
         momentDate = moment()
     }
 
     if (token !== secrets.apiToken) {
-        res.send('Invalid token!')
+        res.send("Invalid token!")
 
-        return;
+        return
     }
 
     database.init()
 
-    const actData = await LogProcessedActivity
-        .query()
-        .whereBetween('created_at', [
-            momentDate.subtract(1, 'months').format('YYYY-MM-DD HH:mm:ss'),
-            momentDate.format('YYYY-MM-DD HH:mm:ss')
-        ])
+    const actData = await LogProcessedActivity.query().whereBetween(
+        "created_at",
+        [
+            momentDate.subtract(1, "months").format("YYYY-MM-DD HH:mm:ss"),
+            momentDate.format("YYYY-MM-DD HH:mm:ss"),
+        ],
+    )
 
     console.log(actData)
     res.send(
@@ -176,18 +177,16 @@ app.get('/api/users/activity', async function (req, res) {
         //         }
         //     ]
         // }
-              {
-        result: actData
-    }
+        {
+            result: actData,
+        },
     )
-});
+})
 
-app.listen(port, (err) => {
+app.listen(port, err => {
     if (err) {
-        return console.log('something bad happened', err)
+        return console.log("something bad happened", err)
     }
 
     console.log(`server is listening on ${port}`)
 })
-
-

@@ -1,37 +1,40 @@
-import {CommandMessage, CommandoClient} from "discord.js-commando"
+import { CommandMessage, CommandoClient } from "discord.js-commando"
 import Match from "../../Models/Match"
 import ListPendingMatches from "../../Listeners/ListPendingMatches"
-import {DMChannel, GroupDMChannel, TextChannel} from "discord.js"
-import BaseCommand from "../BaseCommand";
+import { DMChannel, GroupDMChannel, TextChannel } from "discord.js"
+import BaseCommand from "../BaseCommand"
 
 export default class ListCommand extends BaseCommand {
-    constructor(client : CommandoClient) {
+    constructor(client: CommandoClient) {
         super(client, {
-            name: 'list',
-            memberName: 'list',
-            description: 'List of current matches.',
-            group: 'match',
+            name: "list",
+            memberName: "list",
+            description: "List of current matches.",
+            group: "match",
             guildOnly: true,
-            aliases: ['matches'],
+            aliases: ["matches"],
             args: [
                 {
-                    key: 'showReadyMatches',
-                    label: 'Show already full matches',
-                    prompt: 'showReadyMatches?',
-                    type: 'boolean',
-                    default: false
-                }
-            ]
-        });
+                    key: "showReadyMatches",
+                    label: "Show already full matches",
+                    prompt: "showReadyMatches?",
+                    type: "boolean",
+                    default: false,
+                },
+            ],
+        })
     }
 
-    async run(message : CommandMessage, { showReadyMatches } : { showReadyMatches : boolean}) {
-        const channel : TextChannel|DMChannel|GroupDMChannel = message.channel
+    async run(
+        message: CommandMessage,
+        { showReadyMatches }: { showReadyMatches: boolean },
+    ) {
+        const channel: TextChannel | DMChannel | GroupDMChannel =
+            message.channel
         const matchesWaitingForPlayers = await Match.getWaitingForPlayers()
 
-        // console.log('matchesWaitingForPlayers', matchesWaitingForPlayers)
         if (matchesWaitingForPlayers.length === 0) {
-            message.reply('There are no matches looking for players right now.');
+            message.reply("There are no matches looking for players right now.")
         } else {
             new ListPendingMatches(channel, matchesWaitingForPlayers)
         }
@@ -50,7 +53,7 @@ export default class ListCommand extends BaseCommand {
         //     new ListPendingMatches(Match.getReadyMatches())
         // }
 
-        return message.reply('Use `!match` to start a new one');
+        return message.reply("Use `!match` to start a new one")
         // return message.reply('Use `!match` or `!mix` to start a new one');
     }
-};
+}
