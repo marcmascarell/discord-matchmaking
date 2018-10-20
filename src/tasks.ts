@@ -160,9 +160,9 @@ const cancelNonStartedInactiveMatches = () => {
         })
 }
 
-const cancelNotFullFilledScheduledMatches = () => {
+const cancelNotFullFilledScheduledMatches = async () => {
     console.log("Calling: cancelNotFullFilledScheduledMatches")
-    console.log(Match.getFullMatchById(1))
+    console.log(await Match.getFullMatchById(1))
     Match.query()
         .eager("players")
         .whereNull("deleted_reason") // Not already canceled
