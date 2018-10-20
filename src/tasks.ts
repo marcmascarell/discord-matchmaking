@@ -161,19 +161,25 @@ const cancelNonStartedInactiveMatches = () => {
 }
 
 const cancelNotFullFilledScheduledMatches = async () => {
-    console.log("Calling: cancelNotFullFilledScheduledMatches")
-    console.log(await Match.getFullMatchById(1))
     Match.query()
         .eager("players")
         .whereNull("deleted_reason") // Not already canceled
         .whereNotNull("scheduled_at") // Scheduled match
         .whereNull("server_id")
-        .where("scheduled_at", "<", moment().format("YYYY-MM-DD HH:mm:ss"))
         .then(matches => {
             matches.forEach(match => {
                 if (match.isFull()) {
                     console.log(
                         "Preventing scheduled match from being cancelled: Match is full",
+                        match,
+                    )
+
+                    return
+                }
+
+                if (moment().isBefore(match.scheduledAt)) {
+                    console.log(
+                        "Preventing scheduled match from being cancelled: Match still did not reach scheduled date",
                         match,
                     )
 
