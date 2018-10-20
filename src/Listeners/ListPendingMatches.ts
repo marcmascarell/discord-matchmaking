@@ -2,6 +2,8 @@ import Match from "../Models/Match"
 import { DMChannel, GroupDMChannel, TextChannel } from "discord.js"
 
 import FullMatchCard from "../Embeds/FullMatchCard"
+import MinimalServersStatusCard from "../Embeds/MinimalServersStatusCard"
+import MinimalMatchCard from "../Embeds/MinimalMatchCard"
 const _ = require("lodash")
 const Discord = require("discord.js")
 
@@ -12,7 +14,7 @@ export default class ListPendingMatches {
         matches: Match[],
     ) {
         const titleEmbed = new Discord.RichEmbed()
-
+        //
         if (matches.length === 1) {
             titleEmbed.setTitle(`${matches.length} Match`)
         } else {
@@ -23,8 +25,6 @@ export default class ListPendingMatches {
 
         channel.send(titleEmbed)
 
-        _.each(matches, (match: Match) => {
-            channel.send(new FullMatchCard(match).render())
-        })
+        channel.send(new MinimalMatchCard(matches).render())
     }
 }

@@ -19,6 +19,7 @@ export default class ScheduledMatchCommand extends BaseCommand {
                 "futurematch",
                 "planned-match",
                 "plannedmatch",
+                "schedule-match",
             ],
             args: [
                 {
