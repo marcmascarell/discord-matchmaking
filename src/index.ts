@@ -1,6 +1,9 @@
 import database from "./database"
 import bot from "./bot"
 import tasks from "./tasks"
+import moment from "moment-timezone"
+
+moment.tz.setDefault("Europe/Berlin")
 
 database.init()
 
