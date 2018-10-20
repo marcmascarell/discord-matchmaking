@@ -10,7 +10,7 @@ Matchmaking bot made with [Discord.js](https://discord.js.org) (Node.js)
     -   Choose datetime
 -   List matches (`!list`)
 -   List public servers (`!pub`)
--   List streamers (`!streams`)
+-   List active streams (`!streams`)
 -   Players can join/leave matches (`!join/!leave`)
 -   Gameservers creation (Only COD(1) supported for now.)
     - Provisioned (@DigitalOcean) when the match is full
