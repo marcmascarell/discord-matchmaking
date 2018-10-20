@@ -177,7 +177,7 @@ const cancelNotFullFilledScheduledMatches = async () => {
                     return
                 }
 
-                if (moment().isBefore(match.scheduledAt)) {
+                if (moment().isBefore(moment(match.scheduledAt))) {
                     console.log(
                         "Preventing scheduled match from being cancelled: Match still did not reach scheduled date",
                         match,
