@@ -1,51 +1,65 @@
 import { RichEmbed } from "discord.js"
 import Match from "../Models/Match"
-import MapType from "../Types/MapArgumentType"
 import utils from "../Utilities/utils"
+import moment from "moment"
 
 const Discord = require("discord.js")
 
 export default class MinimalMatchCard {
     private matches: any
+    private embed: RichEmbed
 
-    constructor(matches: any) {
+    constructor(matches: any, embed: RichEmbed | null) {
         this.matches = matches
+        this.embed = embed || new Discord.RichEmbed()
 
         return this
     }
 
     render(): RichEmbed {
-        const embed = new Discord.RichEmbed().setColor("#9B59B6")
+        this.embed.setColor("#9B59B6")
 
         let count = 0
-        this.matches.forEach(match => {
-            const playersPerTeam = match.playersPerTeam()
-            const firstMap: string = match.mapNames()[0]
+        this.matches
+            .sort((a: Match, b: Match) => {
+                let aDate = a.scheduledAt ? a.scheduledAt : a.createdAt
+                let bDate = b.scheduledAt ? b.scheduledAt : b.createdAt
 
-            if (count > 0) {
-                embed.addField("▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁", "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀")
-            }
+                return moment(aDate).isAfter(bDate)
+            })
+            .forEach(match => {
+                const playersPerTeam = match.playersPerTeam()
+                const firstMap: string = match.mapNames()[0]
 
-            embed.addField(
-                `${
-                    match.scheduledAt ? "📅 SCHEDULED:" : ":fire: NOW:"
-                } ${playersPerTeam}vs${playersPerTeam} on ${firstMap}  (${
-                    match.players.length
-                }/${match.maxPlayers})`,
-                match.playerNames().join(", "),
-            )
-            embed.addField(`Join command`, "`!join " + match.id + "`")
+                if (count > 0) {
+                    this.embed.addField(
+                        "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁",
+                        "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+                    )
+                }
 
-            if (match.scheduledAt) {
-                embed.addField(
-                    `Scheduled for`,
-                    `${utils.getHumanSpecificFormattedDate(match.scheduledAt)}`,
+                this.embed.addField(
+                    `${
+                        match.scheduledAt ? "📅 SCHEDULED:" : ":fire: NOW:"
+                    } ${playersPerTeam}vs${playersPerTeam} on ${firstMap}  (${
+                        match.players.length
+                    }/${match.maxPlayers})`,
+                    match.playerNames().join(", "),
                 )
-            }
+                this.embed.addField(`Join command`, "`!join " + match.id + "`")
 
-            count++
-        })
+                if (match.scheduledAt) {
+                    this.embed.addField(
+                        `Scheduled for`,
+                        `${utils.getHumanSpecificFormattedDate(
+                            match.scheduledAt,
+                        )}`,
+                    )
+                }
 
-        return embed
+                count++
+            })
+
+        return this.embed
     }
 }
