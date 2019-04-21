@@ -15,7 +15,7 @@ export default class PubCommand extends BaseCommand {
             memberName: "pub",
             description: "Public servers status.",
             group: "misc",
-            aliases: ["pubs", "public", "publics"],
+            aliases: ["pubs", "public", "publics", "servers"],
             args: [
                 {
                     key: "id",

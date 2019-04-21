@@ -62,14 +62,14 @@ export default class ScheduledMatchCommand extends BaseCommand {
                     label: "Players",
                     prompt: "How many players? (5 or 5v5 or 5vs5 ... NvsN)",
                     type: "match-players",
-                    wait: 15,
+                    wait: 30,
                 },
                 {
                     key: "map",
                     label: "map to play",
                     prompt: "Map? Random/" + MapType.maps.join("/"),
                     type: "map",
-                    default: "random",
+                    wait: 30,
                 },
             ],
         })

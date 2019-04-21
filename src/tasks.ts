@@ -22,7 +22,7 @@ let lastPublicServersNotification
  */
 const init = () => {
     const eachFiveSeconds = "*/5 * * * * *"
-    const eachMinute = "0 */5 * * * *"
+    const eachMinute = "0 */1 * * * *"
     const eachThreeMinutes = "0 */3 * * * *"
     const eachFifteenMinutes = "0 */15 * * * *"
     const eachDay = "0 0 0 * * *"
@@ -160,18 +160,26 @@ const cancelNonStartedInactiveMatches = () => {
         })
 }
 
-const cancelNotFullFilledScheduledMatches = () => {
+const cancelNotFullFilledScheduledMatches = async () => {
     Match.query()
         .eager("players")
         .whereNull("deleted_reason") // Not already canceled
         .whereNotNull("scheduled_at") // Scheduled match
         .whereNull("server_id")
-        .where("scheduled_at", "<", moment().format("YYYY-MM-DD HH:mm:ss"))
         .then(matches => {
             matches.forEach(match => {
                 if (match.isFull()) {
                     console.log(
                         "Preventing scheduled match from being cancelled: Match is full",
+                        match,
+                    )
+
+                    return
+                }
+
+                if (moment().isBefore(moment(match.scheduledAt))) {
+                    console.log(
+                        "Preventing scheduled match from being cancelled: Match still did not reach scheduled date",
                         match,
                     )
 

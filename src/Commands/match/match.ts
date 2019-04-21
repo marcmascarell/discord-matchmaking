@@ -19,14 +19,14 @@ export default class MatchCommand extends BaseCommand {
                     label: "Players",
                     prompt: "How many players? (5 or 5v5 or 5vs5 ... NvsN)",
                     type: "match-players",
-                    wait: 15,
+                    wait: 30,
                 },
                 {
                     key: "map",
                     label: "map to play",
                     prompt: "Map? Random/" + MapType.maps.join("/"),
                     type: "map",
-                    default: "random",
+                    wait: 30,
                 },
             ],
         })
@@ -43,7 +43,7 @@ export default class MatchCommand extends BaseCommand {
 
         if (collidingMatch) {
             return message.reply(
-                "You are in a match that collides with the one you want to join (" +
+                "You are in a match that collides with the one you want to create (Colliding match: #" +
                     collidingMatch.id +
                     ")! To leave write `!leave` to leave or `!list` to see all matches",
             )

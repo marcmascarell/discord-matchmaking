@@ -11,6 +11,7 @@ export default class LeaveCommand extends BaseCommand {
             description: "Leave match.",
             group: "match",
             guildOnly: true,
+            aliases: ["quit"],
 
             args: [
                 {
