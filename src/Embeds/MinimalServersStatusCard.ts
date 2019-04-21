@@ -39,7 +39,7 @@ export default class MinimalServersStatusCard {
             }
 
             embed.addField(
-                `${utils.prettifyMapName(server.map)} (${
+                `➡ ${utils.prettifyMapName(server.map)} (${
                     server.players.length
                 }/${server.maxplayers}) - ${server.name}`,
                 `${server.query.host}:${
