@@ -28,8 +28,11 @@ const prettifyMapName = name => {
     return _.startCase(name.replace("mp_", "").replace("_", ""))
 }
 
-const findServerIndexByIp = ip => {
-    return _.findIndex(secrets.publicServers, server => server.host === ip)
+const findServerIndex = server => {
+    return _.findIndex(
+        secrets.publicServers,
+        item => item.host === server.host && item.port === server.port,
+    )
 }
 
 const fetchServersStatus = async (
@@ -168,5 +171,5 @@ export default {
     getStreams,
     fetchServersStatus,
     getHumanSpecificFormattedDate,
-    findServerIndexByIp,
+    findServerIndex,
 }
