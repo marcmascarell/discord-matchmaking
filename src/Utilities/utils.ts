@@ -28,6 +28,10 @@ const prettifyMapName = name => {
     return _.startCase(name.replace("mp_", "").replace("_", ""))
 }
 
+const findServerIndexByIp = ip => {
+    return _.findIndex(secrets.publicServers, server => server.host === ip)
+}
+
 const fetchServersStatus = async (
     servers: Array<{
         type: string
@@ -49,6 +53,13 @@ const fetchServersStatus = async (
                     host: server.host,
                     port: server.port,
                 })
+
+                // Remove players without frags to prevent fake players to show up
+                if (server.customFields.hasFakePlayers) {
+                    gameState.players = gameState.players.filter(
+                        player => player.frags > 0,
+                    )
+                }
             } catch (e) {
                 console.log("Server fetch failed", server, e.message)
 
@@ -157,4 +168,5 @@ export default {
     getStreams,
     fetchServersStatus,
     getHumanSpecificFormattedDate,
+    findServerIndexByIp,
 }
