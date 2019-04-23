@@ -21,8 +21,8 @@ export default class MinimalServersStatusCard {
             .setColor("#9B59B6")
 
         // Save original array index so we can know which id corresponds
-        this.serversStatus.forEach((server, key) => {
-            server.id = key + 1
+        this.serversStatus.forEach(server => {
+            server.id = utils.findServerIndexByIp(server.host) + 1
         })
 
         const sortedServers = _.sortBy(this.serversStatus, "players").reverse()
