@@ -22,7 +22,7 @@ export default class MinimalServersStatusCard {
 
         // Save original array index so we can know which id corresponds
         this.serversStatus.forEach(server => {
-            server.id = utils.findServerIndexByIp(server.host) + 1
+            server.id = utils.findServerIndex(server) + 1
         })
 
         const sortedServers = _.sortBy(this.serversStatus, "players").reverse()
