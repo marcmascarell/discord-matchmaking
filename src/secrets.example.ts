@@ -9,6 +9,7 @@ const secrets = {
     discordAdmins: [],
     discordModerators: [],
     publicServers: [],
+    streamers: [],
 
     // The production bot should answer or not
     guilds: {

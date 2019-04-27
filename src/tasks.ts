@@ -91,7 +91,7 @@ const lookForNewStreams = async () => {
         new NotifyStreams().handle(
             channel,
             streams,
-            "New stream started right now!",
+            "🔴 New stream started right now!",
         )
     } catch (e) {
         console.log(e)

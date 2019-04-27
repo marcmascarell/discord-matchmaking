@@ -14,9 +14,13 @@ export default class MinimalServersStatusCard {
         return this
     }
 
+    static getServerNameIcon(server): string {
+        return server.players.length ? "🔹" : "🔸"
+    }
+
     render(): RichEmbed {
         let embed = new Discord.RichEmbed()
-            .setTitle("Public servers")
+            .setTitle("💠 Public servers")
             .setDescription("⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀")
             .setColor("#9B59B6")
 
@@ -31,7 +35,7 @@ export default class MinimalServersStatusCard {
             let footer = ""
 
             if (server.customFields.recommended) {
-                footer = "Recommended public server"
+                footer = "**Recommended public server**"
             }
 
             if (server.customFields.mods) {
@@ -39,7 +43,9 @@ export default class MinimalServersStatusCard {
             }
 
             embed.addField(
-                `➡ ${utils.prettifyMapName(server.map)} (${
+                `${MinimalServersStatusCard.getServerNameIcon(
+                    server,
+                )} ${utils.prettifyMapName(server.map)} (${
                     server.players.length
                 }/${server.maxplayers}) - ${server.name}`,
                 `${server.query.host}:${

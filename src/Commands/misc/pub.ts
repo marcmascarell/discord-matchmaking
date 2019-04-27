@@ -41,7 +41,7 @@ export default class PubCommand extends BaseCommand {
         if (id) {
             const server = servers[id - 1]
             if (!server) {
-                return message.reply("That server doesnt exist!")
+                return message.reply("That server doesn't exist!")
             }
 
             const serverStatus = await utils.fetchServersStatus([server])
