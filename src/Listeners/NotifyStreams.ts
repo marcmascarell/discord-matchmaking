@@ -2,16 +2,13 @@ import Listener from "./Listener"
 const Discord = require("discord.js")
 
 export default class NotifyStreams extends Listener {
-    handle(channel, streams, title = `**Currently streaming**`) {
-        let embedTitle = new Discord.RichEmbed()
+    handle(channel, streams, title = `🔴 Currently streaming`) {
+        const embed = new Discord.RichEmbed()
             .setTitle(title)
+            .setDescription("⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀")
             .setColor("#4b367c")
 
-        channel.send(embedTitle)
-
         streams.forEach(stream => {
-            let embed = new Discord.RichEmbed().setColor("#4b367c")
-
             const username = stream.thumbnail_url
                 .replace(
                     "https://static-cdn.jtvnw.net/previews-ttv/live_user_",
@@ -19,10 +16,12 @@ export default class NotifyStreams extends Listener {
                 )
                 .replace("-{width}x{height}.jpg", "")
 
-            embed.setTitle(`https://www.twitch.tv/${username}`)
-            embed.setFooter(`${stream.title}`)
-
-            channel.send(embed)
+            embed.addField(
+                `https://www.twitch.tv/${username}`,
+                `${stream.title}`,
+            )
         })
+
+        channel.send(embed)
     }
 }
