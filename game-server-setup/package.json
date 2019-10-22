@@ -7,6 +7,6 @@
   "license": "ISC",
   "dependencies": {
     "firebase-admin": "^5.12.1",
-    "lodash": "^4.17.10"
+    "lodash": "^4.17.13"
   }
 }

@@ -20,7 +20,6 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@types/knex": "^0.14.15",
         "@types/node": "^10.5.2",
         "cors": "^2.8.4",
         "discord.js": "^11.3.2",
@@ -29,7 +28,7 @@
         "express": "^4.16.3",
         "firebase-admin": "^5.12.1",
         "gamedig": "^1.0.46",
-        "knex": "^0.14.6",
+        "knex": "^0.19.5",
         "lodash": "^4.17.10",
         "moment": "^2.22.1",
         "moment-timezone": "^0.5.21",
@@ -47,6 +46,6 @@
         "pretty-quick": "^1.7.0",
         "shipit-cli": "^4.1.0",
         "shipit-deploy": "^4.1.0",
-        "typescript": "^2.8.3"
+        "typescript": "^3.6.4"
     }
 }

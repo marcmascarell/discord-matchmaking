@@ -11,14 +11,15 @@ Matchmaking bot made with [Discord.js](https://discord.js.org) (Node.js)
 -   List matches (`!list`)
 -   List public servers (`!pub`)
 -   List active streams (`!streams`)
+-   List streamers (`!streamers`)
 -   Players can join/leave matches (`!join/!leave`)
 -   Gameservers creation (Only COD(1) supported for now.)
-    - Provisioned (@DigitalOcean) when the match is full
-    - Players get a private message with the server credentials to join
+    -   Provisioned (@DigitalOcean) when the match is full
+    -   Players get a private message with the server credentials to join
 -   Gameservers get autodestroyed after some time if the server is empty
 -   Voice channels are auto created/destroyed
 -   Admins can request info for matches (included sensitive information like password and rcon)
--   Matches are autocancelled if there is not activity and others 
+-   Matches are autocancelled if there is not activity and others
 -   Checks for Twitch streams and alerts when a stream starts
 
 ## Running the bot (Node.js 9.x)
