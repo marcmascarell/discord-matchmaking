@@ -32,28 +32,31 @@ export default class MinimalServersStatusCard {
         const sortedServers = _.sortBy(this.serversStatus, "players").reverse()
 
         // Array slice is to avoid error: "RangeError: RichEmbeds may not exceed 25 fields"
-        sortedServers.slice(0, 20).forEach(server => {
-            let footer = ""
+        sortedServers
+            .filter(server => !server.customFields.hasFakePlayers)
+            .slice(0, 20)
+            .forEach(server => {
+                let footer = ""
 
-            if (server.customFields.recommended) {
-                footer = "**Recommended public server**"
-            }
+                if (server.customFields.recommended) {
+                    footer = "**Recommended public server**"
+                }
 
-            if (server.customFields.mods) {
-                footer += server.customFields.mods ? ` * Modded` : ""
-            }
+                if (server.customFields.mods) {
+                    footer += server.customFields.mods ? ` * Modded` : ""
+                }
 
-            embed.addField(
-                `${MinimalServersStatusCard.getServerNameIcon(
-                    server,
-                )} ${utils.prettifyMapName(server.map)} (${
-                    server.players.length
-                }/${server.maxplayers}) - ${server.name}`,
-                `${server.query.host}:${
-                    server.query.port
-                } - ${footer.trim()} - _More info \`!pub ${server.id}\`_`,
-            )
-        })
+                embed.addField(
+                    `${MinimalServersStatusCard.getServerNameIcon(
+                        server,
+                    )} ${utils.prettifyMapName(server.map)} (${
+                        server.players.length
+                    }/${server.maxplayers}) - ${server.name}`,
+                    `${server.query.host}:${
+                        server.query.port
+                    } - ${footer.trim()} - _More info \`!pub ${server.id}\`_`,
+                )
+            })
 
         return embed
     }
