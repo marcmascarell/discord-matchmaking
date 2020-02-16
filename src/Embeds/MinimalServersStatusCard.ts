@@ -31,7 +31,8 @@ export default class MinimalServersStatusCard {
 
         const sortedServers = _.sortBy(this.serversStatus, "players").reverse()
 
-        sortedServers.forEach(server => {
+        // Array slice is to avoid error: "RangeError: RichEmbeds may not exceed 25 fields"
+        sortedServers.slice(0, 20).forEach(server => {
             let footer = ""
 
             if (server.customFields.recommended) {

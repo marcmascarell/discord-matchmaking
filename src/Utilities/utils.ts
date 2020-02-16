@@ -38,8 +38,9 @@ const findServerIndex = server => {
 const fetchServersStatus = async (
     servers: Array<{
         type: string
+        name?: string
         host: string // NL Cracked server
-        port: string
+        port: number
         customFields: {
             recommended: boolean
             mods: boolean
