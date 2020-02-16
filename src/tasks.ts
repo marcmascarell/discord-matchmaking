@@ -42,9 +42,11 @@ const init = () => {
         lookForNewStreams()
     })
 
-    scheduler.scheduleJob(eachFifteenMinutes, () => {
-        monitorPublicServers()
-    })
+    if (secrets.monitorPublicServers) {
+        scheduler.scheduleJob(eachFifteenMinutes, () => {
+            monitorPublicServers()
+        })
+    }
 
     scheduler.scheduleJob(eachDay, () => {
         processActivity()

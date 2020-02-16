@@ -1,4 +1,5 @@
 const secrets = {
+    monitorPublicServers: false,
     logCommands: true,
     passwordSalt: "",
     rconSalt: "",
