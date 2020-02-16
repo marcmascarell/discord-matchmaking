@@ -61,6 +61,7 @@ const monitorPublicServers = async () => {
     const embeds = []
 
     serversStatus
+        .filter(server => !server.customFields.hasFakePlayers)
         .filter(serverStatus => serverStatus.players.length >= 14)
         .forEach(gameState => {
             embeds.push(new FullServerStatusCard(gameState).render())
